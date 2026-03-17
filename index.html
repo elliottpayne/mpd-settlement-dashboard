@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minneapolis Settlement Agreement — Compliance Dashboard</title>
+<!-- v2: Trends & Barriers added -->
+<style>
+  :root {
+    --compliant: #16a34a;
+    --compliant-bg: #dcfce7;
+    --partial-on: #2563eb;
+    --partial-on-bg: #dbeafe;
+    --partial-off: #d97706;
+    --partial-off-bg: #fef3c7;
+    --at-risk: #dc2626;
+    --at-risk-bg: #fee2e2;
+    --not-yet: #6b7280;
+    --not-yet-bg: #f3f4f6;
+    --postponed: #7c3aed;
+    --postponed-bg: #ede9fe;
+    --approved: #16a34a;
+    --approved-bg: #dcfce7;
+    --in-progress: #2563eb;
+    --in-progress-bg: #dbeafe;
+    --off-track: #d97706;
+    --off-track-bg: #fef3c7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: white;
+    padding: 28px 32px 24px;
+  }
+  .header-inner { max-width: 1280px; margin: 0 auto; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .header .meta { display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap; }
+  .header .meta-item { font-size: 12px; opacity: 0.9; }
+  .header .meta-item span { font-weight: 600; opacity: 1; }
+
+  /* ── Layout ── */
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+
+  /* ── Stat Cards ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px 18px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #64748b; font-weight: 600; }
+  .stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; line-height: 1; }
+  .stat-card .sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+  .stat-card.green .value { color: var(--compliant); }
+  .stat-card.blue .value  { color: var(--partial-on); }
+  .stat-card.orange .value{ color: var(--partial-off); }
+  .stat-card.red .value   { color: var(--at-risk); }
+  .stat-card.purple .value{ color: var(--postponed); }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 15px; font-weight: 700; color: #1e293b;
+    border-left: 4px solid #2563eb;
+    padding-left: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap { margin-bottom: 24px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 4px; }
+  .progress-bar { height: 10px; background: #e2e8f0; border-radius: 99px; overflow: hidden; display: flex; }
+  .progress-bar .seg { height: 100%; transition: width .4s; }
+  .progress-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #475569; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: 4px; background: #e2e8f0; border-radius: 8px; padding: 3px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab {
+    padding: 7px 14px; border-radius: 6px; cursor: pointer; border: none;
+    background: transparent; font-size: 13px; font-weight: 500; color: #475569;
+    transition: all .15s;
+  }
+  .tab.active { background: white; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,.1); font-weight: 600; }
+  .tab:hover:not(.active) { background: rgba(255,255,255,.5); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── Cards ── */
+  .card {
+    background: white; border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 18px; border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    user-select: none;
+  }
+  .card-header:hover { background: #f8fafc; }
+  .card-header h3 { font-size: 13px; font-weight: 700; color: #1e293b; flex: 1; }
+  .card-header .part-num { font-size: 11px; font-weight: 600; color: #94a3b8; min-width: 50px; }
+  .card-body { padding: 14px 18px; }
+  .card-body.collapsed { display: none; }
+  .chevron { font-size: 12px; color: #94a3b8; transition: transform .2s; }
+  .chevron.open { transform: rotate(90deg); }
+
+  /* ── Status badge ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge.compliant       { background: var(--compliant-bg); color: var(--compliant); }
+  .badge.partial-on      { background: var(--partial-on-bg); color: var(--partial-on); }
+  .badge.partial-off     { background: var(--partial-off-bg); color: var(--partial-off); }
+  .badge.at-risk         { background: var(--at-risk-bg); color: var(--at-risk); }
+  .badge.not-yet         { background: var(--not-yet-bg); color: var(--not-yet); }
+  .badge.postponed       { background: var(--postponed-bg); color: var(--postponed); }
+  .badge.approved        { background: var(--approved-bg); color: var(--approved); }
+  .badge.in-progress     { background: var(--in-progress-bg); color: var(--in-progress); }
+  .badge.off-track       { background: var(--off-track-bg); color: var(--off-track); }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .4px; color: #64748b; padding: 8px 12px;
+    background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+  }
+  td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafc; }
+
+  /* ── Filter bar ── */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0;
+    background: white; font-size: 12px; font-weight: 500; color: #475569; cursor: pointer;
+    transition: all .15s;
+  }
+  .filter-btn.active { border-color: #2563eb; background: #dbeafe; color: #2563eb; }
+  .filter-btn:hover:not(.active) { background: #f8fafc; }
+
+  /* ── Timeline ── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: #e2e8f0; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -24px; top: 5px;
+    width: 10px; height: 10px; border-radius: 50%; background: #2563eb;
+    border: 2px solid white; box-shadow: 0 0 0 2px #2563eb;
+  }
+  .timeline-item .date { font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 3px; }
+  .timeline-item .event { font-size: 13px; color: #334155; }
+
+  /* ── Paragraph list ── */
+  .para-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .para-chip {
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; font-family: monospace;
+  }
+
+  /* ── Summary row ── */
+  .summary-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 6px; }
+
+  /* ── Note ── */
+  .note { font-size: 12px; color: #64748b; font-style: italic; padding: 6px 0; }
+
+  /* ── Report cards ── */
+  .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .report-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .report-card .r-title { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+  .report-card .r-period { font-size: 11px; color: #64748b; margin-bottom: 10px; }
+  .report-card .r-stat { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+  .report-card .r-stat:last-child { border-bottom: none; }
+  .report-card .r-stat .r-label { color: #64748b; }
+  .report-card .r-stat .r-val { font-weight: 600; }
+
+  /* ── Trend chart ── */
+  .trend-chart { display: flex; align-items: flex-end; gap: 14px; height: 160px; padding: 0 8px; margin-bottom: 6px; }
+  .trend-group { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .trend-bars  { display: flex; align-items: flex-end; gap: 3px; height: 140px; }
+  .trend-bar   { width: 22px; border-radius: 4px 4px 0 0; transition: height .5s; position: relative; cursor: default; }
+  .trend-bar:hover .tip { display: block; }
+  .tip { display: none; position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+         background: #1e293b; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;
+         white-space: nowrap; z-index: 10; pointer-events: none; }
+  .trend-label { font-size: 11px; color: #64748b; text-align: center; font-weight: 600; }
+  .trend-sublabel { font-size: 10px; color: #94a3b8; text-align: center; }
+  .trend-axis { display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; padding: 0 8px; }
+
+  /* ── Spark line ── */
+  .spark-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+  .spark-row:last-child { border-bottom: none; }
+  .spark-label { width: 180px; font-size: 12px; color: #334155; font-weight: 500; flex-shrink: 0; }
+  .spark-dots  { display: flex; align-items: center; flex: 1; gap: 0; }
+  .spark-node  { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                 font-size: 9px; font-weight: 700; color: white; flex-shrink: 0; position: relative; }
+  .spark-node .sn-tip { display: none; position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+                        background: #1e293b; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px;
+                        white-space: nowrap; z-index: 10; }
+  .spark-node:hover .sn-tip { display: block; }
+  .spark-line  { flex: 1; height: 2px; }
+  .spark-val { font-size: 11px; color: #64748b; width: 90px; text-align: right; flex-shrink: 0; }
+
+  /* ── Barrier cards ── */
+  .barrier-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .barrier-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0;
+                  box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+  .barrier-header { padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .barrier-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .barrier-title { font-size: 13px; font-weight: 700; color: #1e293b; flex: 1; }
+  .barrier-body { padding: 0 16px 14px; }
+  .barrier-body p { font-size: 12px; color: #475569; line-height: 1.6; }
+  .barrier-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .b-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px; background: #f1f5f9; color: #475569; }
+  .trend-up   { border-left: 4px solid #16a34a; }  /* improving */
+  .trend-flat { border-left: 4px solid #d97706; }  /* ongoing */
+  .trend-down { border-left: 4px solid #dc2626; }  /* worsening/new */
+  .severity-high   { background: #fee2e2; }
+  .severity-med    { background: #fef3c7; }
+  .severity-low    { background: #f0fdf4; }
+
+  /* ── UOF backlog table ── */
+  .backlog-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .backlog-table th { background: #f8fafc; padding: 7px 12px; text-align: left; font-weight: 600;
+                      color: #64748b; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+  .backlog-table td { padding: 7px 12px; border-bottom: 1px solid #f1f5f9; }
+  .change-pos { color: #16a34a; font-weight: 700; }
+  .change-neg { color: #dc2626; font-weight: 700; }
+
+  /* ── Print ── */
+  @media print {
+    .tabs { display: none; }
+    .tab-content { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <h1>Minneapolis Police Department — Settlement Agreement Compliance Dashboard</h1>
+    <div class="subtitle">Independent Evaluator Progress Tracking · State of Minnesota vs. City of Minneapolis · Court File No. 27-cv-23-4177</div>
+    <div class="meta">
+      <div class="meta-item">Agreement Date: <span>July 13, 2023</span></div>
+      <div class="meta-item">IE Team: <span>Effective Law Enforcement for All (ELEFA)</span></div>
+      <div class="meta-item">Latest Report: <span>3rd Semi-Annual (April – Sept 2025)</span></div>
+      <div class="meta-item">Dashboard Updated: <span>March 2026</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Quick Links -->
+  <div style="background:white;border:1px solid #e2e8f0;border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+    <span style="font-size:12px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;">📎 Quick Links</span>
+    <a href="https://lims.minneapolismn.gov/Download/FileV2/30804/MDHR-v-City-of-Minneapolis-Settlement-Agreement.pdf" target="_blank" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px;">📄 Full Settlement Agreement PDF</a>
+    <a href="https://www.elefamn.org" target="_blank" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;">🔍 ELEFA Independent Evaluator</a>
+    <a href="https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/" target="_blank" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;">🏛️ City of Minneapolis SA Page</a>
+    <a href="https://clearinghouse.net/case/43326/" target="_blank" style="font-size:12px;color:#2563eb;font-weight:600;text-decoration:none;">⚖️ Civil Rights Clearinghouse</a>
+    <span style="font-size:11px;color:#94a3b8;margin-left:auto;">¶ paragraph references throughout are clickable links to the Agreement PDF</span>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-grid">
+    <div class="stat-card green">
+      <div class="label">Compliant</div>
+      <div class="value">7</div>
+      <div class="sub">Paragraphs fully compliant</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="label">Partial – On Track</div>
+      <div class="value">80+</div>
+      <div class="sub">Paragraphs partial/on-track</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="label">Policies Approved</div>
+      <div class="value">6</div>
+      <div class="sub">of ~14 core policy areas</div>
+    </div>
+    <div class="stat-card red">
+      <div class="label">Off-Track Items</div>
+      <div class="value">11</div>
+      <div class="sub">Goals behind schedule</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="label">At Risk Items</div>
+      <div class="value">5</div>
+      <div class="sub">Year 2 goals flagged</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Reports Issued</div>
+      <div class="value" style="color:#1e293b;">3</div>
+      <div class="sub">Semi-annual (2024–2025)</div>
+    </div>
+  </div>
+
+  <!-- Overall Progress Bar -->
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Overall Compliance Progress (all 11 Parts)</span>
+      <span>Foundational Phase — Year 2 of 5</span>
+    </div>
+    <div class="progress-bar">
+      <div class="seg" style="width:3%; background:#16a34a;" title="Compliant"></div>
+      <div class="seg" style="width:22%; background:#2563eb;" title="Partially Compliant – On Track"></div>
+      <div class="seg" style="width:8%; background:#d97706;" title="Partially Compliant – Off Track / At Risk"></div>
+      <div class="seg" style="width:67%; background:#e2e8f0;" title="Not Yet Measured"></div>
+    </div>
+    <div class="progress-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Compliant (~3%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2563eb;"></div>Partially Compliant – On Track (~22%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d97706;"></div>Off-Track / At Risk (~8%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e2e8f0;"></div>Not Yet Measured (~67%)</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')">Overview by Part</button>
+    <button class="tab" onclick="showTab('policies')">Policy Approvals</button>
+    <button class="tab" onclick="showTab('training')">Training Status</button>
+    <button class="tab" onclick="showTab('paragraphs')">Compliance Paragraphs</button>
+    <button class="tab" onclick="showTab('trends')">📈 Trends &amp; Barriers</button>
+    <button class="tab" onclick="showTab('timeline')">Timeline</button>
+  </div>
+
+  <!-- ══════════════════════ TAB: OVERVIEW ══════════════════════ -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="section-title">Progress by Agreement Part</div>
+    <p class="note" style="margin-bottom:14px;">Click any Part to expand details. Status as of September 30, 2025 (3rd Semi-Annual Report).</p>
+
+    <!-- Part 2 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 2</div>
+        <h3>Policy</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to revise its core policies in collaboration with the IE Team, MDHR, and community stakeholders. Covers Mission/Vision/Values/Goals (MVVG), Use of Force, Non-Discriminatory Policing, and Stops/Searches/Citations/Arrests as the four core policy areas.</p>
+        <div class="summary-row">
+          <div><strong>Report 1 (Mar–Sep 2024):</strong></div>
+          <span class="badge not-yet">Not Yet Measured</span>
+          <span style="font-size:12px;color:#64748b;">Policy drafting in progress; MVVG posted for public comment Sept 2024</span>
+        </div>
+        <div class="summary-row">
+          <div><strong>Report 2 (Oct 2024–Mar 2025):</strong></div>
+          <span class="badge not-yet">Not Yet Measured</span>
+          <span style="font-size:12px;color:#64748b;">Use of Force policies approved; NDP policies submitted for review</span>
+        </div>
+        <div class="summary-row">
+          <div><strong>Report 3 (Apr–Sep 2025):</strong></div>
+          <span class="badge partial-on">Partially Compliant – On Track</span>
+          <span style="font-size:12px;color:#64748b;">¶27, 28 rated partial/on-track; SSCA still in progress</span>
+        </div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Key achievements:</strong>
+          <ul style="font-size:12px;color:#475569;padding-left:16px;margin-top:4px;line-height:1.8;">
+            <li>MVVG, Use of Force, Non-Discriminatory Policing, BWC, and Officer Health/Wellness policies all approved</li>
+            <li>IA and OPCR Investigation Manuals (SOPs) approved</li>
+            <li>MPD Policy and Resource Hub software in development</li>
+          </ul>
+        </div>
+        <div style="margin-top:8px;">
+          <strong style="font-size:12px;">Remaining gaps:</strong>
+          <ul style="font-size:12px;color:#d97706;padding-left:16px;margin-top:4px;line-height:1.8;">
+            <li>SSCA (9-100s, 9-200s, Warrants) still in progress</li>
+            <li>Field Training Officer SOP, Training policies (2-500s) behind schedule</li>
+            <li>Policy development capacity bottlenecks persist</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 3 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 3</div>
+        <h3>Non-Discriminatory Policing</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to adopt policies prohibiting discrimination in policing and implement training and accountability systems to ensure non-discriminatory practices.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge not-yet">Not Yet Measured</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge not-yet">Not Yet Measured</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-on">Partially Compliant – On Track</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Compliant paragraphs (Report 3):</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶37</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶38a-d, 38f</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶39</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶41</span>
+          </div>
+          <p class="note" style="margin-top:6px;">Policies 5-104 "Non-Discriminatory Policing" and 5-109 "Procedural Justice" approved. Training still needed before full compliance.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 4 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 4</div>
+        <h3>Use of Force</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to revise use-of-force policies, train officers, and review all UOF incidents in accordance with the Agreement. Also requires eliminating a substantial backlog of unreviewed force cases.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge not-yet">Not Yet Measured</span> <span style="font-size:12px;color:#d97706;">1,111 cases in backlog as of 9/30/24</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge partial-on">Partially Compliant – On Track</span> <span style="font-size:12px;color:#475569;">¶59a, 59b Compliant; ~40 paragraphs Partial/On-Track</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-on">Partially Compliant – On Track</span> <span style="font-size:12px;color:#475569;">UOF policy suite approved; training curriculum approved</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Fully Compliant Paragraphs:</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶59a</span>
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶59b</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Partially Compliant – On Track (Report 2 forward):</strong>
+          <p class="note">¶60, 61a-b, 62, 64a-c, 65, 67, 68, 69, 71b-c, 72a-c(v), 73a-b, 74a-c, 75–78, 81a-c(iii), 82c, 83–85, 88–101, 109c-e, 109k, 109p, 112 — policy approved; training in progress.</p>
+        </div>
+        <div style="margin-top:8px;">
+          <strong style="font-size:12px;color:#d97706;">Key challenge:</strong>
+          <p class="note">UOF case backlog (1,100+ cases as of Sept 2024). External vendors and MPD Lieutenants engaged to clear backlog. Classified as At Risk in Year 2 management goals.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 5 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 5</div>
+        <h3>Stops, Searches, Citations, Arrests (SSCA)</h3>
+        <span class="badge partial-off">Off-Track / In Progress</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires comprehensive revisions to all stop, search, citation, and arrest policies to ensure constitutional compliance and non-discrimination. One of four "core policy areas."</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge not-yet">Not Yet Measured</span> <span style="font-size:12px;color:#475569;">Policies in draft</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge not-yet">Not Yet Measured</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-off">Off-Track / In Progress</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;color:#d97706;">Status:</strong>
+          <ul style="font-size:12px;color:#475569;padding-left:16px;margin-top:4px;line-height:1.8;">
+            <li>9-100s and 9-200s SSCA policies: still in collaborative drafting phase</li>
+            <li>Warrants (9-300s): informal feedback phase as of Sept 2025</li>
+            <li>No paragraphs yet rated compliant or partial-compliant</li>
+            <li>Training cannot begin until policy is approved</li>
+            <li>Engaging with Minors (related): Postponed pending SSCA finalization</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 6 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 6</div>
+        <h3>Body Worn Cameras &amp; In-Car Cameras</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to maintain an effective BWC/ICC program, update policies, ensure equipment availability, and develop robust auditing systems.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge partial-on">Partially Compliant – On Track</span> <span style="font-size:12px;color:#475569;">¶172, 173, 178</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge partial-on">Partially Compliant – On Track</span> <span style="font-size:12px;color:#475569;">¶172, 173, 178 continued</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-on">Partially Compliant – On Track</span> <span style="font-size:12px;color:#475569;">Expanded to ¶172–178 after policy approval</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Partial/On-Track paragraphs (Report 3 — after policy 4-223 &amp; 4-508 approval):</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶172</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶173</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶174a-h</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶175</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶176a-b</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶177</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶178</span>
+          </div>
+          <p class="note" style="margin-top:6px;">Training and accountability assessments still required before these can reach full Compliance.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 7 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 7</div>
+        <h3>Training</h3>
+        <span class="badge partial-off">Mixed – Some On-Track, Some Off-Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to develop and deliver comprehensive training curricula covering all Agreement requirements, including use of force, NDP, crisis intervention, supervisory leadership, and more.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge partial-on">¶235, 236 Partial/On-Track</span> <span style="font-size:12px;color:#475569;">CIT refresher and EWM train-the-trainer delivered</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge partial-on">Policy approvals enabling training</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-off">UOF training approved; multiple areas off-track</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;color:#d97706;">Key challenges:</strong>
+          <ul style="font-size:12px;color:#475569;padding-left:16px;margin-top:4px;line-height:1.8;">
+            <li>Training staff capacity inadequate for ambitious Year 2 goals</li>
+            <li>Crisis Intervention refresher training behind schedule</li>
+            <li>Supervisory/Leadership training delayed (required RFP process)</li>
+            <li>SSCA training cannot start until SSCA policies are finalized</li>
+            <li>Engaging with Minors training postponed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 8 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 8</div>
+        <h3>Officer Support, Wellness &amp; Early Intervention</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to provide robust officer wellness services, develop an Employee Support Plan, upgrade facilities and equipment, and implement an Early Intervention System (EIS).</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge compliant">¶254, 255 Compliant</span> <span class="badge partial-on">¶246–248, 256 Partial/On-Track</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge compliant">¶254, 255 Compliant</span> <span class="badge partial-on">¶246–248 continued</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-on">Expanded set Partial/On-Track; Plan approved but At Risk</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Fully Compliant Paragraphs:</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶254</span>
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶255</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Partially Compliant – On Track (Report 3 — after 3-501 &amp; 3-502 approval):</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶253</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶257</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶258</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶259</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶260–264</span>
+            <span class="para-chip" style="background:#dbeafe;color:#2563eb;">¶267</span>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <strong style="font-size:12px;color:#d97706;">At Risk:</strong>
+          <p class="note">Employee Support Plan approved, but Year 2 implementation flagged At Risk due to lack of dedicated staffing and funding. Peer Support Team deployed but awaiting full launch.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 9 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 9</div>
+        <h3>Mental &amp; Behavioral Health Crisis Support</h3>
+        <span class="badge not-yet">Largely Not Yet Measured</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to improve its behavioral crisis response, including collaboration with the Behavioral Crisis Response (BCR) program and appropriate mental health resources in the field.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge not-yet">Not Yet Measured</span> <span style="font-size:12px;color:#d97706;">Data unavailable for assessment</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge not-yet">Not Yet Measured</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge not-yet">Not Yet Measured</span></div>
+        <p class="note" style="margin-top:8px;">IE Team noted difficulty assessing Part 9 due to lack of baseline data. Baseline data production was a Year 1 goal. Crisis Intervention training (8-hour refresher) is under review.</p>
+      </div>
+    </div>
+
+    <!-- Part 10 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 10</div>
+        <h3>Accountability &amp; Oversight</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD and the City to improve misconduct investigation processes through IAD and OPCR, eliminate backlogs, implement new case management systems, and strengthen civilian oversight.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge not-yet">Not Yet Measured</span> <span style="font-size:12px;color:#d97706;">Significant IAD &amp; OPCR backlogs identified</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge compliant">¶338 Compliant</span> <span style="font-size:12px;color:#475569;">CCPO recruitment strategy approved</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge compliant">¶302 Compliant</span> <span class="badge partial-on">50+ paragraphs Partial/On-Track</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Fully Compliant Paragraphs:</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶302</span>
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶338</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Partially Compliant – On Track (Report 3 — after IA/OPCR Investigation Manuals approved):</strong>
+          <p class="note">¶304, 307a-b, 308–336 (multiple sub-paragraphs), 340, 342–343, 345a-c, 346, 351, 353–354</p>
+        </div>
+        <div style="margin-top:8px;">
+          <strong style="font-size:12px;color:#d97706;">Key challenge:</strong>
+          <p class="note">IA and OPCR misconduct case backlogs not yet eliminated. OPCR showed improvement; IA lagging. New case management system still in progress (Off-Track).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 11 -->
+    <div class="card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="part-num">Part 11</div>
+        <h3>Data Systems, Analysis &amp; Transparency</h3>
+        <span class="badge partial-on">Partially Compliant – On Track</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="card-body collapsed">
+        <p style="margin-bottom:10px;font-size:13px;color:#475569;">Requires MPD to modernize its data management technology, implement a comprehensive Data Systems Plan, improve public transparency dashboards, and upgrade its records management system.</p>
+        <div class="summary-row"><strong>Report 1:</strong> <span class="badge compliant">¶361, 362 Compliant</span> <span class="badge partial-on">¶363 Partial/On-Track</span></div>
+        <div class="summary-row"><strong>Report 2:</strong> <span class="badge compliant">¶361 Compliant</span> <span class="badge partial-on">¶362, 363 Partial/On-Track</span></div>
+        <div class="summary-row"><strong>Report 3:</strong> <span class="badge partial-on">Data Systems Plan completed; ongoing implementation</span></div>
+        <div style="margin-top:10px;">
+          <strong style="font-size:12px;">Fully Compliant:</strong>
+          <div class="para-grid" style="margin-top:6px;">
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶361</span>
+            <span class="para-chip" style="background:#dcfce7;color:#16a34a;">¶362</span>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <strong style="font-size:12px;">Note:</strong>
+          <p class="note">MPD has improved public-facing dashboards (Year 2 goal On-Track). Records management system upgrade continues. EIS Phase 1 implementation On-Track.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-overview -->
+
+  <!-- ══════════════════════ TAB: POLICIES ══════════════════════ -->
+  <div id="tab-policies" class="tab-content">
+    <div class="section-title">Policy Approval Status</div>
+    <p class="note" style="margin-bottom:14px;">Year 1 policy goals per the Evaluation Plan. Status as of the 3rd Semi-Annual Report (Sept 2025) with post-period updates noted.</p>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Policy / SOP Area</th>
+            <th>Agreement Part</th>
+            <th>Status (as of Sept 2025)</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Mission, Vision, Values &amp; Goals (MVVG)</strong></td>
+            <td>Part 2</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Posted publicly July 2025</td>
+          </tr>
+          <tr>
+            <td><strong>Use of Force (17 policies)</strong></td>
+            <td>Part 4</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Posted publicly June 2025; not yet active (training pending)</td>
+          </tr>
+          <tr>
+            <td><strong>Non-Discriminatory Policing (5-104)</strong></td>
+            <td>Part 3</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Posted publicly Sept 2025</td>
+          </tr>
+          <tr>
+            <td><strong>Procedural Justice (5-109)</strong></td>
+            <td>Part 3</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Approved during Review Period</td>
+          </tr>
+          <tr>
+            <td><strong>Body Worn Cameras / ICC (4-223 &amp; 4-508)</strong></td>
+            <td>Part 6</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Approved during Review Period</td>
+          </tr>
+          <tr>
+            <td><strong>Member Health and Wellness (3-501)</strong></td>
+            <td>Part 8</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Approved during Review Period</td>
+          </tr>
+          <tr>
+            <td><strong>Member Medical Information, Injury (3-502)</strong></td>
+            <td>Part 8</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Approved during Review Period</td>
+          </tr>
+          <tr>
+            <td><strong>IA Misconduct Investigation Manual</strong></td>
+            <td>Part 10</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Submitted Sept 19, 2025; compliant with ¶302</td>
+          </tr>
+          <tr>
+            <td><strong>OPCR Misconduct Investigation Manual</strong></td>
+            <td>Part 10</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Submitted Sept 19, 2025</td>
+          </tr>
+          <tr>
+            <td><strong>Emergency Medical Response (7-350)</strong></td>
+            <td>Part 2</td>
+            <td><span class="badge approved">✓ Approved by IE</span></td>
+            <td>Approved during Review Period</td>
+          </tr>
+          <tr>
+            <td><strong>Crisis Intervention</strong></td>
+            <td>Part 7/9</td>
+            <td><span class="badge approved">✓ Approved (Year 2)</span></td>
+            <td>Listed as "Approved" in Year 2 Policy Goals (Report 3)</td>
+          </tr>
+          <tr>
+            <td><strong>Peer Support</strong></td>
+            <td>Part 8</td>
+            <td><span class="badge approved">✓ Approved Nov 6, 2025</span></td>
+            <td>Approved after reporting period; Peer Support Team deployed</td>
+          </tr>
+          <tr>
+            <td><strong>Early Intervention System (2-203)</strong></td>
+            <td>Part 8</td>
+            <td><span class="badge approved">✓ Approved Jan 2, 2026</span></td>
+            <td>Approved after reporting period</td>
+          </tr>
+          <tr>
+            <td><strong>Quarterly Review Panels (2-601)</strong></td>
+            <td>Part 10</td>
+            <td><span class="badge approved">✓ Approved Jan 2, 2026</span></td>
+            <td>Approved after reporting period</td>
+          </tr>
+          <tr>
+            <td><strong>Stops, Searches, Arrests &amp; Citations (9-100s, 9-200s)</strong></td>
+            <td>Part 5</td>
+            <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+            <td>Actively being workshopped; training blocked until approved</td>
+          </tr>
+          <tr>
+            <td><strong>Warrants (9-300s)</strong></td>
+            <td>Part 5</td>
+            <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+            <td>Informal feedback phase as of Sept 2025; took 5+ months to return draft</td>
+          </tr>
+          <tr>
+            <td><strong>Misconduct &amp; Accountability (2-100s)</strong></td>
+            <td>Part 10</td>
+            <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+            <td>Being workshopped with Parties</td>
+          </tr>
+          <tr>
+            <td><strong>Disciplinary Matrix</strong></td>
+            <td>Part 10</td>
+            <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+            <td>MPD has made edits; IE has not yet reviewed latest version</td>
+          </tr>
+          <tr>
+            <td><strong>Field Training Officer (FTO) SOP</strong></td>
+            <td>Part 7</td>
+            <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+            <td>IE provided extensive technical assistance; delays persist</td>
+          </tr>
+          <tr>
+            <td><strong>Training Policies (2-500s)</strong></td>
+            <td>Part 7</td>
+            <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+            <td>Still being developed</td>
+          </tr>
+          <tr>
+            <td><strong>Critical Incidents</strong></td>
+            <td>Part 4/10</td>
+            <td><span class="badge at-risk">🔴 At Risk</span></td>
+            <td>MPD working internally; no draft yet shared with IE</td>
+          </tr>
+          <tr>
+            <td><strong>Supervisory Duties &amp; Responsibilities</strong></td>
+            <td>Part 7/10</td>
+            <td><span class="badge at-risk">🔴 At Risk</span></td>
+            <td>MPD working internally; no draft yet shared with IE</td>
+          </tr>
+          <tr>
+            <td><strong>Performance Evaluations</strong></td>
+            <td>Part 10</td>
+            <td><span class="badge at-risk">🔴 At Risk</span></td>
+            <td>Flagged as At Risk in Year 2 Policy Goals</td>
+          </tr>
+          <tr>
+            <td><strong>Engaging with Minors</strong></td>
+            <td>Part 5</td>
+            <td><span class="badge postponed">⏸ Postponed</span></td>
+            <td>Postponed to coordinate with SSCA policy revisions; train-the-trainer completed in Year 1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /tab-policies -->
+
+  <!-- ══════════════════════ TAB: TRAINING ══════════════════════ -->
+  <div id="tab-training" class="tab-content">
+    <div class="section-title">Training Development &amp; Delivery Status</div>
+    <p class="note" style="margin-bottom:14px;">Status of training curricula as of 3rd Semi-Annual Report (April–Sept 2025). Training must follow policy approval; accountability assessments must follow training before full compliance.</p>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header" style="cursor:default;">
+        <h3>Year 1 Training Goals</h3>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Training Topic</th><th>Status</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Crisis Intervention – Refresher (8-hr)</td>
+              <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+              <td>Delivered during Year 1; under review for compliance; refresher curriculum needs update</td>
+            </tr>
+            <tr>
+              <td>Engaging with Minors</td>
+              <td><span class="badge postponed">⏸ Postponed</span></td>
+              <td>Train-the-trainer completed Year 1; full delivery postponed pending policy finalization</td>
+            </tr>
+            <tr>
+              <td>Supervisory / Leadership Training</td>
+              <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+              <td>Delayed due to required RFP process; vendor selection and delivery pending</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="cursor:default;">
+        <h3>Year 2 Training Goals</h3>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr><th>Training Topic</th><th>Status</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Use of Force</strong></td>
+              <td><span class="badge approved">✓ Curriculum Approved / On-Track</span></td>
+              <td>IE observed training; found it satisfies Agreement requirements; in-service delivery underway</td>
+            </tr>
+            <tr>
+              <td><strong>Supervisor Leadership</strong></td>
+              <td><span class="badge approved">✓ Curriculum Approved</span></td>
+              <td>Curriculum approved; delivery in progress</td>
+            </tr>
+            <tr>
+              <td>Non-Discriminatory Policing</td>
+              <td><span class="badge approved">✓ On-Track</span></td>
+              <td>Curriculum development on track following policy approval</td>
+            </tr>
+            <tr>
+              <td>Body Worn Cameras / In-Car Cameras</td>
+              <td><span class="badge in-progress">🔵 On-Track / In Progress</span></td>
+              <td>Following BWC policy approval; training in development</td>
+            </tr>
+            <tr>
+              <td>Officer Wellness, Support &amp; Safety</td>
+              <td><span class="badge in-progress">🔵 On-Track / In Progress</span></td>
+              <td>Draft curriculum submitted to IE and MDHR for review</td>
+            </tr>
+            <tr>
+              <td>Supervisory Duties &amp; Responsibilities</td>
+              <td><span class="badge in-progress">🔵 On-Track / In Progress</span></td>
+              <td>In development</td>
+            </tr>
+            <tr>
+              <td>Stops, Searches, Citations &amp; Arrests</td>
+              <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+              <td>Blocked by SSCA policy delays; training cannot begin without approved policy</td>
+            </tr>
+            <tr>
+              <td>Crisis Intervention (MPD &amp; MECC)</td>
+              <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+              <td>8-hour refresher under review; 40-hour course (new officers) under review; MECC version under review</td>
+            </tr>
+            <tr>
+              <td>Critical Incidents</td>
+              <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+              <td>Policy not yet drafted; training blocked</td>
+            </tr>
+            <tr>
+              <td>Early Intervention System</td>
+              <td><span class="badge off-track">⚠ Off-Track / In Progress</span></td>
+              <td>EIS policy approved Jan 2026; training development needed</td>
+            </tr>
+            <tr>
+              <td>Internal Affairs &amp; OPCR Investigative Procedures</td>
+              <td><span class="badge off-track">⚠ Off-Track / Not Yet Started</span></td>
+              <td>IA/OPCR manuals approved Sept 2025; training yet to begin</td>
+            </tr>
+            <tr>
+              <td>Corrective Action Matrix</td>
+              <td><span class="badge off-track">⚠ Off-Track</span></td>
+              <td>Disciplinary Matrix policy still in progress; training blocked</td>
+            </tr>
+            <tr>
+              <td>Performance Evaluations</td>
+              <td><span class="badge off-track">⚠ Off-Track / Not Yet Started</span></td>
+              <td>Policy At Risk; training not yet started</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /tab-training -->
+
+  <!-- ══════════════════════ TAB: PARAGRAPHS ══════════════════════ -->
+  <div id="tab-paragraphs" class="tab-content">
+    <div class="section-title">Compliance Paragraph Tracker</div>
+    <p class="note" style="margin-bottom:14px;">Paragraphs that have received a compliance rating across the three semi-annual reports. The Agreement contains ~440+ paragraphs; the vast majority remain "Not Yet Measured" as of Sept 2025.</p>
+
+    <div class="filter-bar" id="para-filter">
+      <span style="font-size:12px;color:#64748b;font-weight:600;">Filter by status:</span>
+      <button class="filter-btn active" onclick="filterParas('all', this)">All Rated</button>
+      <button class="filter-btn" onclick="filterParas('compliant', this)">✓ Compliant</button>
+      <button class="filter-btn" onclick="filterParas('partial-on', this)">Partially – On Track</button>
+    </div>
+
+    <div class="card">
+      <table id="para-table">
+        <thead>
+          <tr>
+            <th>Paragraph(s)</th>
+            <th>Part</th>
+            <th>Topic</th>
+            <th>Status</th>
+            <th>First Rated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="compliant">
+            <td><code>¶59a, ¶59b</code></td>
+            <td>Part 4 – Use of Force</td>
+            <td>UOF policy guidance on sanctity of life, force options/prohibitions</td>
+            <td><span class="badge compliant">✓ Compliant</span></td>
+            <td>Report 2</td>
+          </tr>
+          <tr data-status="compliant">
+            <td><code>¶254, ¶255</code></td>
+            <td>Part 8 – Wellness</td>
+            <td>Needs assessments for Employee Support Plan and wellness</td>
+            <td><span class="badge compliant">✓ Compliant</span></td>
+            <td>Report 1</td>
+          </tr>
+          <tr data-status="compliant">
+            <td><code>¶302</code></td>
+            <td>Part 10 – Accountability</td>
+            <td>Revise policies for misconduct investigative timelines &amp; benchmarks</td>
+            <td><span class="badge compliant">✓ Compliant</span></td>
+            <td>Report 3</td>
+          </tr>
+          <tr data-status="compliant">
+            <td><code>¶338</code></td>
+            <td>Part 10 – Accountability</td>
+            <td>CCPO recruitment and outreach strategy</td>
+            <td><span class="badge compliant">✓ Compliant</span></td>
+            <td>Report 2</td>
+          </tr>
+          <tr data-status="compliant">
+            <td><code>¶361</code></td>
+            <td>Part 11 – Data</td>
+            <td>Assessment of MPD data management technology</td>
+            <td><span class="badge compliant">✓ Compliant</span></td>
+            <td>Report 1</td>
+          </tr>
+          <tr data-status="compliant">
+            <td><code>¶362</code></td>
+            <td>Part 11 – Data</td>
+            <td>Data Systems assessment (external vendor)</td>
+            <td><span class="badge compliant">✓ Compliant</span></td>
+            <td>Report 1 (then upgraded)</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶27, ¶28</code></td>
+            <td>Part 2 – Policy</td>
+            <td>Officer/community engagement and public posting for 4 core policy areas</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 3</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶37, 38a-d, 38f, 39, 41</code></td>
+            <td>Part 3 – NDP</td>
+            <td>Non-discriminatory policing policy requirements</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 3</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶60, 61a-b, 62, 64a-c, 65, 67–69, 71b-c...</code></td>
+            <td>Part 4 – Use of Force</td>
+            <td>Comprehensive UOF policy topics (force types, prohibited force, de-escalation, etc.)</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 2</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶172, 173, 174a-h, 175, 176a-b, 177, 178</code></td>
+            <td>Part 6 – BWC</td>
+            <td>BWC program, equipment, auditing, ICC maintenance</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 1 (expanded Report 3)</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶235, ¶236</code></td>
+            <td>Part 7 – Training</td>
+            <td>Annual Training Plan and Training Needs Assessment</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 1</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶246, ¶247, ¶248</code></td>
+            <td>Part 8 – Wellness</td>
+            <td>Facilities, equipment &amp; technology assessments; Equipment/Facilities Response Plan</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 1</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶253, 257–264, 267</code></td>
+            <td>Part 8 – Wellness</td>
+            <td>Member health/wellness policy requirements (3-501 &amp; 3-502)</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 3</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶304, 307a-b, 308–336, 340, 342–354</code></td>
+            <td>Part 10 – Accountability</td>
+            <td>IA and OPCR investigative procedures (misconduct investigations, timelines, reviews)</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 3</td>
+          </tr>
+          <tr data-status="partial-on">
+            <td><code>¶363</code></td>
+            <td>Part 11 – Data</td>
+            <td>Data Systems Plan / Records Management System implementation</td>
+            <td><span class="badge partial-on">Partially Compliant – On Track</span></td>
+            <td>Report 1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">All other paragraphs of the Agreement not listed above are considered "Not Yet Measured" as of the 3rd Semi-Annual Report (September 30, 2025). Full compliance requires: (1) policy incorporated, (2) training delivered, (3) accountability assessed, and (4) sustained compliance demonstrated.</p>
+
+  </div><!-- /tab-paragraphs -->
+
+  <!-- ══════════════════════ TAB: TRENDS & BARRIERS ══════════════════════ -->
+  <div id="tab-trends" class="tab-content">
+
+    <!-- ── Section 1: Compliance Growth ── -->
+    <div class="section-title">Compliance Growth Across Three Reports</div>
+    <p class="note" style="margin-bottom:16px;">Paragraphs earning a rated compliance status have grown significantly, driven primarily by the wave of policy approvals in Year 2. The vast majority of provisions still remain "Not Yet Measured" — full compliance requires policy, training, and sustained accountability.</p>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;">
+          <!-- Compliance counts chart -->
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#334155;margin-bottom:10px;">Paragraphs with Compliance Rating</div>
+            <div class="trend-chart">
+              <!-- Report 1 -->
+              <div class="trend-group">
+                <div class="trend-bars">
+                  <div class="trend-bar" style="height:28px;background:#16a34a;">
+                    <div class="tip">4 Compliant</div>
+                  </div>
+                  <div class="trend-bar" style="height:14px;background:#2563eb;">
+                    <div class="tip">7 Partial/On-Track</div>
+                  </div>
+                </div>
+                <div class="trend-label">Report 1</div>
+                <div class="trend-sublabel">Mar–Sep '24</div>
+              </div>
+              <!-- Report 2 -->
+              <div class="trend-group">
+                <div class="trend-bars">
+                  <div class="trend-bar" style="height:36px;background:#16a34a;">
+                    <div class="tip">5 Compliant</div>
+                  </div>
+                  <div class="trend-bar" style="height:90px;background:#2563eb;">
+                    <div class="tip">~45 Partial/On-Track</div>
+                  </div>
+                </div>
+                <div class="trend-label">Report 2</div>
+                <div class="trend-sublabel">Oct '24–Mar '25</div>
+              </div>
+              <!-- Report 3 -->
+              <div class="trend-group">
+                <div class="trend-bars">
+                  <div class="trend-bar" style="height:50px;background:#16a34a;">
+                    <div class="tip">7 Compliant</div>
+                  </div>
+                  <div class="trend-bar" style="height:140px;background:#2563eb;">
+                    <div class="tip">80+ Partial/On-Track</div>
+                  </div>
+                </div>
+                <div class="trend-label">Report 3</div>
+                <div class="trend-sublabel">Apr–Sep '25</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:4px;font-size:11px;">
+              <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;"></span>Compliant</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:10px;height:10px;background:#2563eb;border-radius:2px;"></span>Partial/On-Track</span>
+            </div>
+          </div>
+
+          <!-- Policies approved chart -->
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#334155;margin-bottom:10px;">Core Policies / SOPs Approved by IE</div>
+            <div class="trend-chart">
+              <div class="trend-group">
+                <div class="trend-bars">
+                  <div class="trend-bar" style="height:0px;background:#16a34a;min-height:4px;opacity:.3;">
+                    <div class="tip">0 policies approved</div>
+                  </div>
+                </div>
+                <div class="trend-label">Report 1</div>
+                <div class="trend-sublabel">Mar–Sep '24</div>
+              </div>
+              <div class="trend-group">
+                <div class="trend-bars">
+                  <div class="trend-bar" style="height:42px;background:#16a34a;">
+                    <div class="tip">3 approved (MVVG, UOF×17, Crisis Intervention)</div>
+                  </div>
+                </div>
+                <div class="trend-label">Report 2</div>
+                <div class="trend-sublabel">Oct '24–Mar '25</div>
+              </div>
+              <div class="trend-group">
+                <div class="trend-bars">
+                  <div class="trend-bar" style="height:140px;background:#16a34a;">
+                    <div class="tip">12 policies/SOPs approved (+ 3 post-period)</div>
+                  </div>
+                </div>
+                <div class="trend-label">Report 3</div>
+                <div class="trend-sublabel">Apr–Sep '25</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Per-Part Trend Sparks ── -->
+    <div class="section-title">Per-Part Progress Trend</div>
+    <p class="note" style="margin-bottom:12px;">How each Part has moved across the three reporting periods. Colour indicates highest status achieved in that period.</p>
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body">
+        <div style="display:flex;gap:8px;font-size:10px;color:#64748b;margin-bottom:12px;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:16px;height:16px;background:#16a34a;border-radius:50%;"></span>Compliant</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:16px;height:16px;background:#2563eb;border-radius:50%;"></span>Partial / On-Track</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:16px;height:16px;background:#d97706;border-radius:50%;"></span>Off-Track / At Risk</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="display:inline-block;width:16px;height:16px;background:#e2e8f0;border-radius:50%;border:1px solid #cbd5e1;"></span>Not Yet Measured</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:180px 1fr 1fr 1fr 120px;gap:0;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;padding:4px 0;border-bottom:2px solid #e2e8f0;margin-bottom:6px;">
+          <div>Part</div><div style="text-align:center;">Report 1<br><span style="font-weight:400;text-transform:none;">Mar–Sep '24</span></div>
+          <div style="text-align:center;">Report 2<br><span style="font-weight:400;text-transform:none;">Oct '24–Mar '25</span></div>
+          <div style="text-align:center;">Report 3<br><span style="font-weight:400;text-transform:none;">Apr–Sep '25</span></div>
+          <div style="text-align:center;">Trajectory</div>
+        </div>
+
+        <!-- Part rows -->
+        <div id="part-trend-rows">
+          <!-- each row: part, r1 color, r2 color, r3 color, arrow -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 3: UOF Backlog Trend ── -->
+    <div class="section-title">Use of Force Case Review Backlog — Trend</div>
+    <p class="note" style="margin-bottom:12px;">One of the most significant quantitative indicators in the reports. Level 1 backlog reduced 89% by March 2025, but Level 2 and Critical Incident backlogs remain concerns.</p>
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body">
+        <table class="backlog-table">
+          <thead>
+            <tr>
+              <th>Case Category</th>
+              <th>Sept 2024 (Rpt 1)</th>
+              <th>Mar 2025 (Rpt 2)</th>
+              <th>Change</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Level 1 Backlog</strong> (lowest force)</td>
+              <td>685 cases</td>
+              <td>24 cases</td>
+              <td><span class="change-pos">▼ 89% reduction</span></td>
+              <td><span class="badge compliant" style="font-size:10px;">Major Progress</span></td>
+            </tr>
+            <tr>
+              <td><strong>Level 2 / Non-Critical L3 Backlog</strong></td>
+              <td>458 cases</td>
+              <td>285 cases</td>
+              <td><span class="change-pos">▼ 34% reduction</span></td>
+              <td><span class="badge partial-on" style="font-size:10px;">Improving</span></td>
+            </tr>
+            <tr>
+              <td><strong>Critical Incident (Level 3) Backlog</strong></td>
+              <td>15 cases</td>
+              <td>13 cases</td>
+              <td><span class="change-neg">▼ 13% — minimal progress</span></td>
+              <td><span class="badge at-risk" style="font-size:10px;">High Concern</span></td>
+            </tr>
+            <tr>
+              <td><strong>Total Backlog</strong></td>
+              <td>~1,158 cases</td>
+              <td>~322 cases</td>
+              <td><span class="change-pos">▼ 72% overall reduction</span></td>
+              <td><span class="badge partial-on" style="font-size:10px;">Improving</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:10px;">⚠️ IE Team flagged that the outside law firm contract funding is nearly exhausted. Without extension or additional FIT staffing, the backlog may rebound — especially as new UOF policies and training will likely increase case volume.</p>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Barriers ── -->
+    <div class="section-title">Barriers Impacting Progress</div>
+    <p class="note" style="margin-bottom:6px;">
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px;"><span style="display:inline-block;width:10px;height:18px;background:#dc2626;border-radius:2px;vertical-align:middle;"></span>Worsening / New concern</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px;"><span style="display:inline-block;width:10px;height:18px;background:#d97706;border-radius:2px;vertical-align:middle;"></span>Ongoing / Not resolved</span>
+      <span style="display:inline-flex;align-items:center;gap:5px;"><span style="display:inline-block;width:10px;height:18px;background:#16a34a;border-radius:2px;vertical-align:middle;"></span>Improving</span>
+    </p>
+    <p class="note" style="margin-bottom:14px;">All barriers are sourced directly from IE Team observations across the three semi-annual reports.</p>
+
+    <div class="barrier-grid">
+
+      <!-- B1 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-med">
+          <div class="barrier-icon">👥</div>
+          <div>
+            <div class="barrier-title">Policy Development Staffing &amp; Capacity</div>
+            <span class="badge off-track" style="font-size:10px;">Ongoing — All 3 Reports</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>Too few staff are tasked with the vast majority of policy revision work, creating bottlenecks and slow turnaround times. Key individuals are overburdened with multiple simultaneous assignments. While an external vendor was hired to add capacity, delays in returning drafts (e.g., 5+ months for Warrants policy, 6 weeks for FTO SOP) persist.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Directly delays all downstream work — training, accountability, and compliance assessments cannot begin until policies are approved.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 2 – Policy</span>
+            <span class="b-tag">Part 5 – SSCA</span>
+            <span class="b-tag">Part 7 – Training</span>
+            <span class="b-tag">Part 10 – Accountability</span>
+            <span class="b-tag" style="background:#fef3c7;color:#d97706;">⚠ Still unresolved as of Sept 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B2 -->
+      <div class="barrier-card trend-up">
+        <div class="barrier-header severity-med">
+          <div class="barrier-icon">📁</div>
+          <div>
+            <div class="barrier-title">UOF Case Review Backlog</div>
+            <span class="badge partial-on" style="font-size:10px;">Improving — but Funding Risk</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>As of September 2024, FIT had 1,111+ unreviewed use-of-force cases. By March 2025, the backlog was reduced by 72% overall (Level 1 down 89%), largely due to contracting an outside law firm for additional investigators. However, IE Team flagged the contract cap is nearly exhausted.</p>
+          <p style="margin-top:8px;"><strong>Risk:</strong> Without contract extension or permanent staffing additions, the backlog could rebound — especially since new UOF policies and training will likely increase future case volumes.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 4 – Use of Force</span>
+            <span class="b-tag">Part 10 – Accountability</span>
+            <span class="b-tag" style="background:#dcfce7;color:#16a34a;">✓ Major progress made</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">🔴 Funding cap risk remains</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B3 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-high">
+          <div class="barrier-icon">🗂️</div>
+          <div>
+            <div class="barrier-title">IA / OPCR Misconduct Investigation Backlog</div>
+            <span class="badge off-track" style="font-size:10px;">Ongoing — Unevenly Improving</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>Both Internal Affairs and OPCR have historical backlogs of misconduct complaint investigations that have not yet been eliminated. OPCR showed marked improvement in timeliness and capacity by Report 3, but IA continues to lag. The new case management software intended to help is itself off-track.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Undermines officer accountability and damages community trust. Blocks Full and Effective Compliance for Part 10.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 10 – Accountability</span>
+            <span class="b-tag" style="background:#fef3c7;color:#d97706;">OPCR improving</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">IA still lagging</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">Case mgmt. system off-track</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B4 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-high">
+          <div class="barrier-icon">📋</div>
+          <div>
+            <div class="barrier-title">SSCA Policy Delays — Blocking a Chain of Requirements</div>
+            <span class="badge off-track" style="font-size:10px;">Ongoing — All 3 Reports</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>Stops, Searches, Citations &amp; Arrests (SSCA) policies (9-100s, 9-200s, and Warrants 9-300s) remain unapproved over 2 years into the Agreement. Workshopping was paused in early 2025 to prioritize UOF. As of September 2025, the SSCA policies are still in informal feedback / workshopping phases.</p>
+          <p style="margin-top:8px;"><strong>Cascade effect:</strong> Delays SSCA training → delays Engaging with Minors policy (explicitly postponed to coordinate) → delays compliance assessments for Part 5 and related training under Part 7.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 5 – SSCA</span>
+            <span class="b-tag">Part 7 – Training</span>
+            <span class="b-tag">Engaging with Minors</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">No paragraphs yet rated compliant</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B5 -->
+      <div class="barrier-card trend-down">
+        <div class="barrier-header severity-high">
+          <div class="barrier-icon">🏋️</div>
+          <div>
+            <div class="barrier-title">Insufficient Training Delivery Capacity</div>
+            <span class="badge at-risk" style="font-size:10px;">Worsening — Identified Report 3</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>MPD's current training staff capacity is inadequate to meet the Department's ambitious Year 2 training goals. With multiple new policy curricula requiring delivery to the full department — Use of Force, NDP, BWC, Officer Wellness, Crisis Intervention, Supervisor Leadership, and more — the training pipeline is severely strained.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Training is the critical second step (after policy) before any paragraph can reach full Compliance. Delays in training delivery directly prevent compliance determinations across all Parts.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 7 – Training</span>
+            <span class="b-tag">Part 3 – NDP</span>
+            <span class="b-tag">Part 4 – UOF</span>
+            <span class="b-tag">Part 6 – BWC</span>
+            <span class="b-tag">Part 8 – Wellness</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">🔴 New concern in Report 3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B6 -->
+      <div class="barrier-card trend-down">
+        <div class="barrier-header severity-high">
+          <div class="barrier-icon">🔗</div>
+          <div>
+            <div class="barrier-title">Lack of Coordinated Leadership &amp; Siloed Decision-Making</div>
+            <span class="badge at-risk" style="font-size:10px;">Emerging Concern — Report 3</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>Implementation of some requirements has been hindered by a lack of coordination between MPD and City units. IE Team observed siloed information and decision-making, key individuals overburdened with multiple tasks, and disciplinary decisions delayed due to multi-stakeholder administrative requirements.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Slows cross-departmental requirements (data systems, facilities, EIS, BCR co-response) and undermines consistent implementation across the organization.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Cross-cutting — all Parts</span>
+            <span class="b-tag">Part 8 – Wellness / EIS</span>
+            <span class="b-tag">Part 11 – Data</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">🔴 Named as key challenge in Report 3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B7 -->
+      <div class="barrier-card trend-down">
+        <div class="barrier-header severity-med">
+          <div class="barrier-icon">📣</div>
+          <div>
+            <div class="barrier-title">Failure to Communicate — Officer Misconceptions</div>
+            <span class="badge at-risk" style="font-size:10px;">Emerging Concern — Report 3</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>MPD focus groups and informal discussions revealed that officers continue to have significant misunderstandings and misconceptions about the Agreement and the IE Team's role. Officers perceive the required changes as being "forced on the Department" rather than as improvements MPD is committed to making.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Reduces officer buy-in, makes officer focus groups less productive, and may undermine effective implementation and accountability once policies are active.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 7 – Training</span>
+            <span class="b-tag">Part 2 – Policy</span>
+            <span class="b-tag">Organizational culture</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">🔴 Named as key challenge in Report 3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B8 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-high">
+          <div class="barrier-icon">💊</div>
+          <div>
+            <div class="barrier-title">Employee Support Plan — Staffing &amp; Funding Gap</div>
+            <span class="badge at-risk" style="font-size:10px;">At Risk — Reports 2 &amp; 3</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>The Employee Support Plan has been approved by the IE Team, but the City and MPD have not allocated adequate dedicated staffing or funding for implementation. As of March 2025, only two full-time personnel were assigned to the Wellness Unit — insufficient for the Plan's requirements. The Peer Support Team deployment also awaits full launch.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Year 2 implementation of the Employee Support Plan is flagged At Risk. Underfunding officer wellness undermines long-term sustainability of reform.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 8 – Officer Wellness</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">🔴 At Risk classification (Year 2)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B9 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-med">
+          <div class="barrier-icon">💻</div>
+          <div>
+            <div class="barrier-title">Technology &amp; IT System Limitations</div>
+            <span class="badge off-track" style="font-size:10px;">Ongoing — All 3 Reports</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>Current IT systems limit the effectiveness of compliance efforts across multiple Agreement requirements. Key technology projects remain off-track: the IA/OPCR misconduct case management system, the new UOF reporting module, and the EIS Phase 1 system. The policy management software (Policy and Resource Hub) was not yet live as of September 2025.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> Without modernized systems, data collection for accountability is impaired and compliance auditing cannot proceed for several Part 10 and Part 11 requirements.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 10 – Accountability</span>
+            <span class="b-tag">Part 11 – Data</span>
+            <span class="b-tag">Part 8 – EIS</span>
+            <span class="b-tag" style="background:#fef3c7;color:#d97706;">IA/OPCR case mgmt. still off-track</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B10 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-med">
+          <div class="barrier-icon">🧠</div>
+          <div>
+            <div class="barrier-title">Data Gaps Blocking Part 9 (Mental Health / BCR)</div>
+            <span class="badge not-yet" style="font-size:10px;">Persistent — All 3 Reports</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>The IE Team was unable to assess Part 9 requirements in Report 1 due to a complete lack of available baseline data. By Report 2, the City moved the Behavioral Crisis Response (BCR) program under the Fire Department and began assessing data gaps and operational deficiencies. Progress continued in Report 3, but Part 9 remains entirely "Not Yet Measured."</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> No compliance ratings can be issued for any Part 9 paragraphs until baseline data and operational assessments are complete.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 9 – Mental Health</span>
+            <span class="b-tag" style="background:#fef3c7;color:#d97706;">0 paragraphs rated in all 3 reports</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B11 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-med">
+          <div class="barrier-icon">📜</div>
+          <div>
+            <div class="barrier-title">FTO Program &amp; Training Policy Gaps</div>
+            <span class="badge off-track" style="font-size:10px;">Off-Track — Reports 2 &amp; 3</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>The absence of an approved Field Training Officer (FTO) SOP continues to delay implementation of the FTO program. This is critical because new recruits who receive Academy training need that training reinforced through the FTO program once assigned to patrol. Training policies (2-500s) are also still in progress.</p>
+          <p style="margin-top:8px;"><strong>Impact:</strong> New officer training effectiveness is undermined, and the pipeline from Academy through field deployment is broken without a compliant FTO program.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 7 – Training</span>
+            <span class="b-tag" style="background:#fee2e2;color:#dc2626;">Key concern in Report 3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- B12 -->
+      <div class="barrier-card trend-flat">
+        <div class="barrier-header severity-low">
+          <div class="barrier-icon">📣</div>
+          <div>
+            <div class="barrier-title">Community Oversight Engagement Challenges</div>
+            <span class="badge partial-on" style="font-size:10px;">Partially Addressed</span>
+          </div>
+        </div>
+        <div class="barrier-body">
+          <p>In Report 1, the City's Community Commission on Police Oversight (CCPO) expressed frustration with MPD's policy feedback process: lack of notice, insufficient review time for voluminous policies, and lack of transparency about how community input was considered. MPD agreed to proactively notify CCPO when policies are posted. By Report 3, MPD published an extensive public accounting of how feedback was incorporated into UOF policies.</p>
+          <p style="margin-top:8px;"><strong>Status:</strong> Improving, but ongoing tension between Agreement timelines and community desire for meaningful input.</p>
+          <div class="barrier-meta">
+            <span class="b-tag">Part 2 – Policy</span>
+            <span class="b-tag">Part 3 – NDP</span>
+            <span class="b-tag" style="background:#dcfce7;color:#16a34a;">✓ Improving since Report 1</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /barrier-grid -->
+
+    <!-- ── Section 5: Barrier Summary Table ── -->
+    <div class="section-title">Barrier Summary at a Glance</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Barrier</th>
+            <th>Severity</th>
+            <th>First Noted</th>
+            <th>Trend</th>
+            <th>Parts Affected</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Policy staffing &amp; capacity bottleneck</td>
+            <td><span class="badge at-risk" style="font-size:10px;">High</span></td>
+            <td>Report 1</td>
+            <td>→ Ongoing</td>
+            <td>2, 5, 7, 10</td>
+          </tr>
+          <tr>
+            <td>UOF case review backlog</td>
+            <td><span class="badge partial-off" style="font-size:10px;">High → Med</span></td>
+            <td>Report 1</td>
+            <td>↑ Improving (funding risk)</td>
+            <td>4, 10</td>
+          </tr>
+          <tr>
+            <td>IA/OPCR misconduct backlog</td>
+            <td><span class="badge at-risk" style="font-size:10px;">High</span></td>
+            <td>Report 1</td>
+            <td>→ Unevenly improving</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>SSCA policy delays (cascade)</td>
+            <td><span class="badge at-risk" style="font-size:10px;">High</span></td>
+            <td>Report 1</td>
+            <td>→ Ongoing (2+ years)</td>
+            <td>5, 7</td>
+          </tr>
+          <tr>
+            <td>Insufficient training delivery capacity</td>
+            <td><span class="badge at-risk" style="font-size:10px;">High</span></td>
+            <td>Report 3</td>
+            <td>↓ Worsening</td>
+            <td>3, 4, 6, 7, 8</td>
+          </tr>
+          <tr>
+            <td>Lack of coordinated leadership / siloed decisions</td>
+            <td><span class="badge at-risk" style="font-size:10px;">High</span></td>
+            <td>Report 3</td>
+            <td>↓ Newly identified</td>
+            <td>All Parts</td>
+          </tr>
+          <tr>
+            <td>Officer misconceptions about Agreement</td>
+            <td><span class="badge partial-off" style="font-size:10px;">Medium</span></td>
+            <td>Report 3</td>
+            <td>↓ Newly identified</td>
+            <td>2, 7</td>
+          </tr>
+          <tr>
+            <td>Employee Support Plan funding/staffing gap</td>
+            <td><span class="badge at-risk" style="font-size:10px;">High</span></td>
+            <td>Report 2</td>
+            <td>→ At Risk designation</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>IT/technology system limitations</td>
+            <td><span class="badge partial-off" style="font-size:10px;">Medium</span></td>
+            <td>Report 1</td>
+            <td>→ Partially improving</td>
+            <td>8, 10, 11</td>
+          </tr>
+          <tr>
+            <td>Data gaps (Part 9 / BCR)</td>
+            <td><span class="badge partial-off" style="font-size:10px;">Medium</span></td>
+            <td>Report 1</td>
+            <td>→ Slowly improving</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td>FTO SOP / training policy gaps</td>
+            <td><span class="badge partial-off" style="font-size:10px;">Medium</span></td>
+            <td>Report 2</td>
+            <td>→ Ongoing</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>Community oversight engagement</td>
+            <td><span class="badge partial-on" style="font-size:10px;">Low → Med</span></td>
+            <td>Report 1</td>
+            <td>↑ Improving</td>
+            <td>2, 3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /tab-trends -->
+
+  <!-- ══════════════════════ TAB: TIMELINE ══════════════════════ -->
+  <div id="tab-timeline" class="tab-content">
+    <div class="section-title">Settlement Agreement Timeline</div>
+
+    <div class="report-grid">
+      <div class="report-card">
+        <div class="r-title">1st Semi-Annual Report</div>
+        <div class="r-period">March 18 – September 30, 2024</div>
+        <div class="r-stat"><span class="r-label">Compliant paragraphs</span><span class="r-val" style="color:#16a34a;">4</span></div>
+        <div class="r-stat"><span class="r-label">Partial/On-Track</span><span class="r-val" style="color:#2563eb;">7</span></div>
+        <div class="r-stat"><span class="r-label">Policies approved</span><span class="r-val">0 (in progress)</span></div>
+        <div class="r-stat"><span class="r-label">Key focus</span><span class="r-val">Foundational learning &amp; policy drafting</span></div>
+      </div>
+      <div class="report-card">
+        <div class="r-title">2nd Semi-Annual Report</div>
+        <div class="r-period">October 1, 2024 – March 31, 2025</div>
+        <div class="r-stat"><span class="r-label">Compliant paragraphs</span><span class="r-val" style="color:#16a34a;">5 (cumulative)</span></div>
+        <div class="r-stat"><span class="r-label">Partial/On-Track</span><span class="r-val" style="color:#2563eb;">~45 (cumulative)</span></div>
+        <div class="r-stat"><span class="r-label">Policies approved</span><span class="r-val">UOF suite approved</span></div>
+        <div class="r-stat"><span class="r-label">Key milestone</span><span class="r-val">UOF policy suite &amp; CCPO strategy compliant</span></div>
+      </div>
+      <div class="report-card">
+        <div class="r-title">3rd Semi-Annual Report</div>
+        <div class="r-period">April 1, 2025 – September 30, 2025</div>
+        <div class="r-stat"><span class="r-label">Compliant paragraphs</span><span class="r-val" style="color:#16a34a;">7 (cumulative)</span></div>
+        <div class="r-stat"><span class="r-label">Partial/On-Track</span><span class="r-val" style="color:#2563eb;">80+ (cumulative)</span></div>
+        <div class="r-stat"><span class="r-label">Policies approved</span><span class="r-val">9 additional policies/SOPs</span></div>
+        <div class="r-stat"><span class="r-label">Key challenge</span><span class="r-val">SSCA &amp; IA/OPCR backlog, staffing gaps</span></div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:8px;">Key Events</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="date">July 13, 2023</div>
+            <div class="event">Settlement Agreement signed — State of Minnesota vs. City of Minneapolis</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">March 18, 2024</div>
+            <div class="event">IE Team (ELEFA) contract becomes effective; evaluation period begins</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">June 2024</div>
+            <div class="event">MPD re-posts Use of Force policies for public comment (¶28 requirement)</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">September 2024</div>
+            <div class="event">MPD posts MVVG and NDP policies for 45-day public comment; 1,111 UOF cases in backlog identified</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">January 31, 2025</div>
+            <div class="event">1st Semi-Annual Progress Review published (covering March–Sept 2024)</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">March 17, 2025</div>
+            <div class="event">End of Year 1 of Evaluation Plan — foundational phase milestone</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">Apr–Sept 2025</div>
+            <div class="event">Use of Force, NDP, BWC, Officer Wellness, IA/OPCR Investigation Manuals all approved by IE Team</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">June 2025</div>
+            <div class="event">MPD posts 17 approved UOF policies + approved Crisis Intervention &amp; Emergency Medical Response policies publicly</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">September 19, 2025</div>
+            <div class="event">IA and OPCR Investigation Manuals submitted; ¶302 found Compliant</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">November 6, 2025</div>
+            <div class="event">Peer Support policy approved (post-period)</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">January 2, 2026</div>
+            <div class="event">Early Intervention System policy (2-203) and Quarterly Review Panels policy (2-601) approved (post-period)</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">March 2026</div>
+            <div class="event">4th Semi-Annual Report expected (covering Oct 2025–March 2026)</div>
+          </div>
+          <div class="timeline-item">
+            <div class="date">March 2028</div>
+            <div class="event">Anticipated completion of Evaluation Phase; Full and Effective Compliance review per ¶440</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:20px;">Compliance Status Definitions</div>
+    <div class="card">
+      <div class="card-body">
+        <table>
+          <thead><tr><th>Status</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge compliant">✓ Compliant</span></td><td>All material elements of the requirement have been sustainably implemented.</td></tr>
+            <tr><td><span class="badge partial-on">Partially Compliant – On Track</span></td><td>One or more material elements implemented and MPD is progressing toward compliance consistent with the Implementation Plan.</td></tr>
+            <tr><td><span class="badge partial-off">Partially Compliant – Off Track</span></td><td>Some elements implemented but MPD is not progressing consistent with the Implementation Plan.</td></tr>
+            <tr><td><span class="badge at-risk">At Risk</span></td><td>MPD is facing the prospect of not making further progress or becoming non-compliant.</td></tr>
+            <tr><td><span class="badge not-yet">Not Yet Measured</span></td><td>IE Team has not yet assessed compliance with the requirement. Preliminary steps must first be completed.</td></tr>
+            <tr><td><span class="badge postponed">Postponed</span></td><td>Implementation delayed to coordinate with other requirements or address dependencies.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-timeline -->
+
+</div><!-- /container -->
+
+<!-- Footer -->
+<div style="background:#f1f5f9;border-top:1px solid #e2e8f0;padding:16px 32px;font-size:11px;color:#94a3b8;text-align:center;">
+  Sources: IE Team Progress Review Reports (ELEFA) — 1st (Jan 2025), 2nd (2025), 3rd (2025/2026) · Agreement: State of MN vs. City of Minneapolis, Court File No. 27-cv-23-4177 ·
+  <a href="https://lims.minneapolismn.gov/Download/FileV2/30804/MDHR-v-City-of-Minneapolis-Settlement-Agreement.pdf" target="_blank" style="color:#2563eb;">📄 Full Settlement Agreement PDF</a> ·
+  Contact IE Team: outreach@elefamn.org · <a href="https://www.elefamn.org" target="_blank" style="color:#2563eb;">www.elefamn.org</a> ·
+  <a href="https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/" target="_blank" style="color:#2563eb;">City of Minneapolis SA Page</a>
+  <br style="margin-top:4px;"><span style="font-size:10px;">Note: ¶ links open the Settlement Agreement PDF at the approximate page. Page estimates are based on SA structure; use Ctrl+F to search for the exact paragraph number.</span>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggleCard(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.chevron');
+    body.classList.toggle('collapsed');
+    chevron.classList.toggle('open');
+  }
+
+  function filterParas(status, btn) {
+    document.querySelectorAll('#para-filter .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const rows = document.querySelectorAll('#para-table tbody tr');
+    rows.forEach(row => {
+      if (status === 'all' || row.dataset.status === status) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  // ── Settlement Agreement PDF link ──
+  const SA_PDF = 'https://lims.minneapolismn.gov/Download/FileV2/30804/MDHR-v-City-of-Minneapolis-Settlement-Agreement.pdf';
+  const SA_CITY = 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/';
+  const ELEFA   = 'https://www.elefamn.org';
+
+  // Approximate page numbers for key paragraph ranges in the SA
+  // (Agreement is ~128 pages; ~3-5 paragraphs per page)
+  const PARA_PAGES = {
+    27:10, 28:10, 37:13, 38:13, 39:13, 41:13,
+    59:20, 60:21, 61:21, 62:21, 64:21, 65:22, 67:22, 68:22, 69:22,
+    71:23, 72:23, 73:23, 74:23, 75:23, 76:23, 77:24, 78:24,
+    81:25, 82:25, 83:25, 84:25, 85:25, 88:26, 89:26, 90:26,
+    91:27, 92:27, 93:27, 94:27, 95:27, 96:28, 97:28, 98:28, 99:28, 100:28,
+    101:29, 109:30, 112:30,
+    172:58, 173:58, 174:58, 175:59, 176:59, 177:59, 178:59,
+    235:78, 236:78,
+    246:82, 247:82, 248:82, 253:83, 254:84, 255:84, 256:84,
+    257:85, 258:85, 259:85, 260:85, 261:85, 262:86, 263:86, 264:86, 267:86,
+    290:94, 302:99, 304:100, 307:100, 308:101, 309:101, 310:101, 311:101,
+    312:102, 313:102, 314:102, 315:102, 316:103, 317:103, 318:103, 319:103,
+    320:104, 321:104, 322:104, 323:104, 324:105, 325:105, 326:105, 327:105,
+    328:106, 329:106, 330:106, 331:107, 332:107, 333:107, 334:107,
+    335:108, 336:108, 338:108, 340:109, 342:109, 343:109, 345:110,
+    346:110, 351:111, 353:111, 354:111,
+    361:118, 362:118, 363:119, 413:129, 414:129, 440:133
+  };
+
+  function paraPage(n) {
+    if (PARA_PAGES[n]) return PARA_PAGES[n];
+    // rough linear interpolation for unlisted paragraphs
+    return Math.max(1, Math.round(n * 0.3));
+  }
+
+  function paraLink(num, label) {
+    const page = paraPage(parseInt(num));
+    return `<a href="${SA_PDF}#page=${page}" target="_blank"
+       title="View ¶${num} in the Settlement Agreement (opens PDF, page ~${page})"
+       style="color:#2563eb;text-decoration:underline;text-decoration-style:dotted;font-weight:600;">${label || ('¶' + num)}</a>`;
+  }
+
+  // Auto-convert all ¶ number references in .para-chip, .note, td, and li elements
+  document.addEventListener('DOMContentLoaded', () => {
+    const selectors = ['.para-chip', '.note', 'td', 'li', '.event', '.barrier-body p', '.r-stat .r-val'];
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        if (el.children.length && !el.classList.contains('para-chip')) return; // skip elements with child elements (except chips)
+        const html = el.innerHTML;
+        const converted = html.replace(/¶(\d+(?:[a-z](?:-[a-z])?)?)/g, (match, paraNum) => {
+          const num = parseInt(paraNum);
+          const page = paraPage(num);
+          return `<a href="${SA_PDF}#page=${page}" target="_blank"
+            title="View ¶${paraNum} in the Settlement Agreement (PDF page ~${page})"
+            style="color:#2563eb;text-decoration:underline;text-decoration-style:dotted;">${match}</a>`;
+        });
+        if (converted !== html) el.innerHTML = converted;
+      });
+    });
+
+    // Also linkify paragraph chips
+    document.querySelectorAll('.para-chip').forEach(el => {
+      const text = el.textContent.trim();
+      const match = text.match(/¶(\d+)/);
+      if (match) {
+        const num = parseInt(match[1]);
+        const page = paraPage(num);
+        el.style.cursor = 'pointer';
+        el.title = `View in Settlement Agreement (PDF page ~${page})`;
+        el.onclick = () => window.open(`${SA_PDF}#page=${page}`, '_blank');
+      }
+    });
+  });
+
+  // ── Per-Part trend rows ──
+  const STATUS_COLOR = {
+    compliant:   '#16a34a',
+    partial_on:  '#2563eb',
+    partial_off: '#d97706',
+    at_risk:     '#dc2626',
+    not_yet:     '#e2e8f0',
+  };
+  const STATUS_LABEL = {
+    compliant:   'Compliant',
+    partial_on:  'Partial/On-Track',
+    partial_off: 'Off-Track',
+    at_risk:     'At Risk',
+    not_yet:     'Not Yet Measured',
+  };
+  const PARTS = [
+    { name:'Part 2 – Policy',          r1:'not_yet',    r2:'not_yet',    r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+    { name:'Part 3 – NDP',             r1:'not_yet',    r2:'not_yet',    r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+    { name:'Part 4 – Use of Force',    r1:'not_yet',    r2:'partial_on', r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+    { name:'Part 5 – SSCA',            r1:'not_yet',    r2:'not_yet',    r3:'partial_off', arrow:'→', arrowColor:'#d97706' },
+    { name:'Part 6 – BWC / ICC',       r1:'partial_on', r2:'partial_on', r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+    { name:'Part 7 – Training',        r1:'partial_on', r2:'partial_on', r3:'partial_off', arrow:'↓', arrowColor:'#dc2626' },
+    { name:'Part 8 – Wellness / EIS',  r1:'compliant',  r2:'compliant',  r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+    { name:'Part 9 – Mental Health',   r1:'not_yet',    r2:'not_yet',    r3:'not_yet',     arrow:'→', arrowColor:'#94a3b8' },
+    { name:'Part 10 – Accountability', r1:'not_yet',    r2:'partial_on', r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+    { name:'Part 11 – Data',           r1:'compliant',  r2:'partial_on', r3:'partial_on',  arrow:'↑', arrowColor:'#16a34a' },
+  ];
+
+  function dot(status, tip) {
+    const c = STATUS_COLOR[status];
+    const isLight = status === 'not_yet';
+    return `<div style="display:flex;align-items:center;justify-content:center;">
+      <div style="width:22px;height:22px;border-radius:50%;background:${c};
+           border:${isLight ? '1px solid #cbd5e1' : 'none'};
+           display:flex;align-items:center;justify-content:center;
+           font-size:9px;font-weight:700;color:${isLight?'#94a3b8':'white'};
+           cursor:default;position:relative;" title="${tip}">
+        ${status === 'compliant' ? '✓' : status === 'at_risk' ? '!' : ''}
+      </div>
+    </div>`;
+  }
+
+  const container = document.getElementById('part-trend-rows');
+  PARTS.forEach(p => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:180px 1fr 1fr 1fr 120px;gap:0;padding:8px 0;border-bottom:1px solid #f1f5f9;align-items:center;';
+    row.innerHTML = `
+      <div style="font-size:12px;font-weight:600;color:#334155;">${p.name}</div>
+      ${dot(p.r1, STATUS_LABEL[p.r1])}
+      ${dot(p.r2, STATUS_LABEL[p.r2])}
+      ${dot(p.r3, STATUS_LABEL[p.r3])}
+      <div style="text-align:center;font-size:20px;color:${p.arrowColor};font-weight:700;">${p.arrow}</div>
+    `;
+    container.appendChild(row);
+  });
+  // last row no border
+  if (container.lastChild) container.lastChild.style.borderBottom = 'none';
+</script>
+
+</body>
+</html>
