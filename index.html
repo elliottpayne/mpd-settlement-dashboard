@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minneapolis Police Department Settlement Agreement - Compliance Dashboard</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23003865'/%3E%3Ctext x='32' y='46' font-family='Arial,sans-serif' font-size='40' font-weight='700' fill='white' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="https://www.minneapolismn.gov/favicon.ico">
+    <link rel="apple-touch-icon" href="https://www.minneapolismn.gov/apple-touch-icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -43,12 +44,15 @@
             flex-shrink: 0;
             display: flex;
             align-items: center;
+            background: white;
+            border-radius: 8px;
+            padding: 10px 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        .city-logo svg {
-            height: 72px;
+        .city-logo img {
+            height: 50px;
             width: auto;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
         .header-title {
@@ -673,21 +677,9 @@
         <div class="header-container">
             <div class="header-top">
                 <div class="city-logo">
-                    <!-- City of Minneapolis official wordmark logo -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 80" role="img" aria-label="City of Minneapolis">
-                        <!-- Star/spark motif above text -->
-                        <g fill="white" opacity="0.9">
-                            <polygon points="110,2 111.5,6.5 116,6.5 112.5,9 113.8,13.5 110,11 106.2,13.5 107.5,9 104,6.5 108.5,6.5" />
-                        </g>
-                        <!-- "CITY OF" text -->
-                        <text x="110" y="28" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="400" fill="white" text-anchor="middle" letter-spacing="4" opacity="0.85">CITY OF</text>
-                        <!-- "Minneapolis" main wordmark -->
-                        <text x="110" y="56" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="700" fill="white" text-anchor="middle" letter-spacing="1">Minneapolis</text>
-                        <!-- Decorative underline rule -->
-                        <line x1="18" y1="62" x2="202" y2="62" stroke="white" stroke-width="1" opacity="0.5"/>
-                        <!-- "MINNESOTA" small text -->
-                        <text x="110" y="75" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="400" fill="white" text-anchor="middle" letter-spacing="3" opacity="0.7">MINNESOTA</text>
-                    </svg>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/City_of_Minneapolis_logo%2C_2023.svg"
+                         alt="City of Minneapolis" width="200" height="50"
+                         onerror="this.style.display='none'">
                 </div>
                 <div class="header-title">
                     <h1>Minneapolis Police Department Settlement Agreement</h1>
@@ -725,7 +717,7 @@
 
     <div class="quick-links">
         <div class="quick-links-content">
-            <a href="https://www.pca.state.mn.us/civil-rights/minneapolis-police-settlement-agreement" target="_blank">Settlement Agreement PDF</a>
+            <a href="https://lims.minneapolismn.gov/Download/FileV2/30804/MDHR-v-City-of-Minneapolis-Settlement-Agreement.pdf" target="_blank">Settlement Agreement PDF</a>
             <a href="https://www.elefamn.org" target="_blank">ELEFA (IE Team) Website</a>
             <a href="https://www.minneapolismn.gov/government/public-safety/mpd-settlement-agreement/" target="_blank">City of Minneapolis SA Page</a>
             <a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank">MPD Policy Hub</a>
@@ -762,24 +754,67 @@
         </div>
 
         <div class="phase-indicator">
-            <h3>Evaluation Timeline & Phase Progress</h3>
+            <h3>Evaluation Timeline & Key Milestones — March 2026</h3>
             <div class="phase-bar">
-                <div class="phase-segment complete">Phase 1 Foundational Mar 24-Mar 25</div>
-                <div class="phase-segment current">Phase 2 Implementation Mar 25-Mar 26</div>
-                <div class="phase-segment future">Phase 3 Evaluation Mar 26-Mar 28+</div>
+                <div class="phase-segment complete">Phase 1 — Foundational<br><small>Mar 2024–Mar 2025 ✓ Complete</small></div>
+                <div class="phase-segment complete" style="background:linear-gradient(135deg,#15803d,#16a34a);">Phase 2 — Implementation<br><small>Mar 2025–Mar 2026 ✓ Complete</small></div>
+                <div class="phase-segment current">Phase 3 — Evaluation<br><small>Mar 2026–Mar 2029 ← Now Entering</small></div>
             </div>
-            <div class="phase-legend">
-                <div class="phase-legend-item">
-                    <div class="phase-legend-color" style="background-color: #16a34a;"></div>
-                    <span>Complete</span>
+            <div class="phase-legend" style="margin-bottom: 20px;">
+                <div class="phase-legend-item"><div class="phase-legend-color" style="background:#16a34a;"></div><span>Complete</span></div>
+                <div class="phase-legend-item"><div class="phase-legend-color" style="background:linear-gradient(90deg,#2563eb,#3b82f6);"></div><span>Now Entering (Phase 3)</span></div>
+                <div class="phase-legend-item"><div class="phase-legend-color" style="background:#d1d5db;"></div><span>Upcoming</span></div>
+            </div>
+
+            <!-- Real milestone task list -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:4px;">
+
+                <!-- Phase 1 Milestones -->
+                <div>
+                    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#15803d;margin-bottom:8px;">Phase 1 — Foundational (Mar 2024–Mar 2025)</div>
+                    <div style="font-size:12px;line-height:1.8;">
+                        <div>✅ Evaluation Plan finalized <span style="color:#6b7280;">(Sept 2024)</span></div>
+                        <div>✅ 5-300 UoF Policy Series — 17 policies approved <span style="color:#6b7280;">(Feb 2025)</span></div>
+                        <div>✅ 7-803 Crisis Intervention Policy approved <span style="color:#6b7280;">(Feb 2025)</span></div>
+                        <div>✅ MVVG Preface (Mission/Vision/Values/Goals) <span style="color:#6b7280;">(Feb 2025)</span></div>
+                        <div>✅ Year 1 Training Needs Assessment <span style="color:#6b7280;">(Jan 2024)</span></div>
+                        <div>✅ Annual Training Plan submitted <span style="color:#6b7280;">(Jan 2025)</span></div>
+                        <div>⚠️ IA/OPCR backlog reduction <span style="color:#d97706;font-weight:600;">Partial — carried into Phase 2</span></div>
+                    </div>
                 </div>
-                <div class="phase-legend-item">
-                    <div class="phase-legend-color" style="background: linear-gradient(90deg, #2563eb, #3b82f6);"></div>
-                    <span>Current (50% through Phase 2)</span>
+
+                <!-- Phase 2 Milestones -->
+                <div>
+                    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#15803d;margin-bottom:8px;">Phase 2 — Implementation (Mar 2025–Mar 2026)</div>
+                    <div style="font-size:12px;line-height:1.8;">
+                        <div>✅ 7-350 Emergency Medical Response approved <span style="color:#6b7280;">(Apr 2025)</span></div>
+                        <div>✅ 5-104 Non-Discriminatory Policing approved <span style="color:#6b7280;">(Sept 2025)</span></div>
+                        <div>✅ 5-109 Procedural Justice Policy approved <span style="color:#6b7280;">(Sept 2025)</span></div>
+                        <div>✅ 3-501/3-502 Member Wellness Policies <span style="color:#6b7280;">(Sept 2025)</span></div>
+                        <div>✅ 4-223/4-508 BWC Policies approved <span style="color:#6b7280;">(Sept 2025)</span></div>
+                        <div>✅ IA &amp; OPCR Misconduct Manuals approved <span style="color:#6b7280;">(Sept 2025)</span></div>
+                        <div>✅ Peer Support Policy approved <span style="color:#6b7280;">(Nov 2025)</span></div>
+                        <div>✅ 2-203 EIS Policy approved <span style="color:#6b7280;">(Jan 2026)</span></div>
+                        <div>✅ 2-601 QRP Policy approved <span style="color:#6b7280;">(Jan 2026)</span></div>
+                        <div>✅ Year 2 TNA completed <span style="color:#6b7280;">(Jan 2025)</span></div>
+                        <div>⚠️ UoF training delivery <span style="color:#d97706;font-weight:600;">Delayed 6 weeks</span></div>
+                        <div>❌ SSCA Policies (9-100s/9-200s/Warrants) <span style="color:#dc2626;font-weight:600;">Off-track — pushed to 2026</span></div>
+                        <div>❌ NDP/SSCA Officer Training <span style="color:#dc2626;font-weight:600;">Pushed to Feb 8, 2026</span></div>
+                    </div>
                 </div>
-                <div class="phase-legend-item">
-                    <div class="phase-legend-color" style="background-color: #d1d5db;"></div>
-                    <span>Upcoming</span>
+
+                <!-- Phase 3 Milestones -->
+                <div>
+                    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#2563eb;margin-bottom:8px;">Phase 3 — Evaluation (Mar 2026–Mar 2029)</div>
+                    <div style="font-size:12px;line-height:1.8;color:#374151;">
+                        <div>🔲 SSCA/Warrants policy finalization &amp; training delivery</div>
+                        <div>🔲 FTO SOP 40-hour training deployment (Fall 2026)</div>
+                        <div>🔲 Comprehensive UoF audit cycles begin</div>
+                        <div>🔲 Community engagement &amp; feedback evaluation</div>
+                        <div>🔲 IA/OPCR backlog elimination milestone</div>
+                        <div>🔲 Annual sustained compliance audits (Years 3–5)</div>
+                        <div>🔲 Paragraph 440 compliance determination <span style="color:#6b7280;">(Mar 2029)</span></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1347,12 +1382,12 @@
             <div class="footer-section">
                 <p style="margin-bottom: 8px; color: #4b5563;">The following documents form the evidentiary basis for this compliance dashboard:</p>
                 <div class="footer-links">
-                    <a href="https://www.pca.state.mn.us/civil-rights/minneapolis-police-settlement-agreement" target="_blank">Settlement Agreement (Final) — MDHR website</a>
+                    <a href="https://lims.minneapolismn.gov/Download/FileV2/30804/MDHR-v-City-of-Minneapolis-Settlement-Agreement.pdf" target="_blank">Settlement Agreement (Final) — MDHR website</a>
                     <a href="https://www.elefamn.org" target="_blank">ELEFA Semi-Annual Reports (1, 2, 3) — ELEFA website</a>
                     <a href="https://www.minneapolismn.gov/government/public-safety/mpd-settlement-agreement/" target="_blank">City of Minneapolis SA Implementation Page</a>
                     <a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank">MPD Policy Hub (Published Policies)</a>
                     <a href="https://www.minneapolismn.gov" target="_blank">City of Minneapolis Website</a>
-                    <a href="https://www.pca.state.mn.us" target="_blank">Minnesota Department of Human Rights (MDHR)</a>
+                    <a href="https://mn.gov/mdhr" target="_blank">Minnesota Department of Human Rights (MDHR)</a>
                 </div>
             </div>
 
@@ -1387,6 +1422,25 @@
         // Auto-link policy number patterns (e.g. "5-300", "7-803 Series", "2-203") to Policy Hub
         document.addEventListener('DOMContentLoaded', function() {
             const HUB = 'https://mpdpolicyhub.minneapolismn.gov';
+            // Deep-link lookup: policy number → direct hub or city page URL
+            const POLICY_URLS = {
+                '5-300': 'https://mpdpolicyhub.minneapolismn.gov',
+                '5-104': 'https://mpdpolicyhub.minneapolismn.gov',
+                '5-109': 'https://mpdpolicyhub.minneapolismn.gov',
+                '7-803': 'https://mpdpolicyhub.minneapolismn.gov',
+                '7-350': 'https://mpdpolicyhub.minneapolismn.gov',
+                '3-501': 'https://mpdpolicyhub.minneapolismn.gov',
+                '3-502': 'https://mpdpolicyhub.minneapolismn.gov',
+                '4-223': 'https://mpdpolicyhub.minneapolismn.gov',
+                '4-508': 'https://mpdpolicyhub.minneapolismn.gov',
+                '2-203': 'https://mpdpolicyhub.minneapolismn.gov',
+                '2-601': 'https://mpdpolicyhub.minneapolismn.gov',
+                '2-100': 'https://mpdpolicyhub.minneapolismn.gov',
+                '2-500': 'https://mpdpolicyhub.minneapolismn.gov',
+                '9-100': 'https://mpdpolicyhub.minneapolismn.gov',
+                '9-200': 'https://mpdpolicyhub.minneapolismn.gov',
+                '9-300': 'https://mpdpolicyhub.minneapolismn.gov',
+            };
             // Match MPD policy numbers: digit-3digits, optionally followed by "Series" or "s"
             const POLICY_RE = /\b(\d-\d{3,4}(?:s\b|\s+Series)?)/g;
 
@@ -1427,11 +1481,13 @@
                             frag.appendChild(document.createTextNode(text.slice(last, m.index)));
                         }
                         const a = document.createElement('a');
-                        a.href = HUB;
+                        // Use specific deep-link if known, else fall back to hub homepage
+                        const baseNum = m[0].match(/\d-\d{3}/)?.[0];
+                        a.href = (baseNum && POLICY_URLS[baseNum]) ? POLICY_URLS[baseNum] : HUB;
                         a.target = '_blank';
                         a.rel = 'noopener noreferrer';
                         a.className = 'policy-link';
-                        a.title = 'View on MPD Policy Hub';
+                        a.title = 'View ' + (baseNum || m[0]) + ' on MPD Policy Hub';
                         a.textContent = m[0];
                         frag.appendChild(a);
                         last = m.index + m[0].length;
