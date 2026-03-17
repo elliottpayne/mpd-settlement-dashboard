@@ -247,6 +247,83 @@
             border-radius: 2px;
         }
 
+        /* ── Progress bars ── */
+        .progress-section {
+            margin-top: 24px;
+        }
+
+        .progress-row {
+            display: grid;
+            grid-template-columns: 220px 1fr 52px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .progress-label-col {}
+
+        .progress-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.3;
+        }
+
+        .progress-sublabel {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 1px;
+        }
+
+        .progress-track {
+            background: #e5e7eb;
+            border-radius: 9999px;
+            height: 14px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            width: 0;
+            transition: width 1.2s cubic-bezier(.4,0,.2,1);
+        }
+
+        .progress-fill-green  { background: linear-gradient(90deg, #15803d, #22c55e); }
+        .progress-fill-blue   { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+        .progress-fill-amber  { background: linear-gradient(90deg, #b45309, #fbbf24); }
+        .progress-fill-red    { background: linear-gradient(90deg, #b91c1c, #f87171); }
+        .progress-fill-gray   { background: linear-gradient(90deg, #6b7280, #9ca3af); }
+
+        .progress-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* milestone checklist */
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 28px;
+            margin-top: 20px;
+            font-size: 12px;
+            line-height: 1.9;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 16px;
+        }
+
+        .milestone-col-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
         .tabs {
             display: flex;
             gap: 0;
@@ -677,9 +754,10 @@
         <div class="header-container">
             <div class="header-top">
                 <div class="city-logo">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/8a/City_of_Minneapolis_logo%2C_2023.svg"
+                    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});document.querySelector('.tab-button').click();return false;" title="Return to Dashboard Overview" style="display:flex;align-items:center;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/City_of_Minneapolis_logo%2C_2023.svg"
                          alt="City of Minneapolis" width="200" height="50"
-                         onerror="this.style.display='none'">
+                         onerror="this.style.display='none'"></a>
                 </div>
                 <div class="header-title">
                     <h1>Minneapolis Police Department Settlement Agreement</h1>
@@ -766,55 +844,98 @@
                 <div class="phase-legend-item"><div class="phase-legend-color" style="background:#d1d5db;"></div><span>Upcoming</span></div>
             </div>
 
-            <!-- Real milestone task list -->
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:4px;">
+            <!-- Animated progress bars -->
+            <div class="progress-section">
 
-                <!-- Phase 1 Milestones -->
-                <div>
-                    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#15803d;margin-bottom:8px;">Phase 1 — Foundational (Mar 2024–Mar 2025)</div>
-                    <div style="font-size:12px;line-height:1.8;">
-                        <div>✅ Evaluation Plan finalized <span style="color:#6b7280;">(Sept 2024)</span></div>
-                        <div>✅ 5-300 UoF Policy Series — 17 policies approved <span style="color:#6b7280;">(Feb 2025)</span></div>
-                        <div>✅ 7-803 Crisis Intervention Policy approved <span style="color:#6b7280;">(Feb 2025)</span></div>
-                        <div>✅ MVVG Preface (Mission/Vision/Values/Goals) <span style="color:#6b7280;">(Feb 2025)</span></div>
-                        <div>✅ Year 1 Training Needs Assessment <span style="color:#6b7280;">(Jan 2024)</span></div>
-                        <div>✅ Annual Training Plan submitted <span style="color:#6b7280;">(Jan 2025)</span></div>
-                        <div>⚠️ IA/OPCR backlog reduction <span style="color:#d97706;font-weight:600;">Partial — carried into Phase 2</span></div>
+                <div class="progress-row">
+                    <div class="progress-label-col">
+                        <div class="progress-label">5-Year Evaluation Plan</div>
+                        <div class="progress-sublabel">Year 2 of 5 complete — entering Phase 3</div>
                     </div>
+                    <div class="progress-track"><div class="progress-fill progress-fill-blue" data-target="40"></div></div>
+                    <div class="progress-value">40%</div>
                 </div>
 
-                <!-- Phase 2 Milestones -->
-                <div>
-                    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#15803d;margin-bottom:8px;">Phase 2 — Implementation (Mar 2025–Mar 2026)</div>
-                    <div style="font-size:12px;line-height:1.8;">
-                        <div>✅ 7-350 Emergency Medical Response approved <span style="color:#6b7280;">(Apr 2025)</span></div>
-                        <div>✅ 5-104 Non-Discriminatory Policing approved <span style="color:#6b7280;">(Sept 2025)</span></div>
-                        <div>✅ 5-109 Procedural Justice Policy approved <span style="color:#6b7280;">(Sept 2025)</span></div>
-                        <div>✅ 3-501/3-502 Member Wellness Policies <span style="color:#6b7280;">(Sept 2025)</span></div>
-                        <div>✅ 4-223/4-508 BWC Policies approved <span style="color:#6b7280;">(Sept 2025)</span></div>
-                        <div>✅ IA &amp; OPCR Misconduct Manuals approved <span style="color:#6b7280;">(Sept 2025)</span></div>
-                        <div>✅ Peer Support Policy approved <span style="color:#6b7280;">(Nov 2025)</span></div>
-                        <div>✅ 2-203 EIS Policy approved <span style="color:#6b7280;">(Jan 2026)</span></div>
-                        <div>✅ 2-601 QRP Policy approved <span style="color:#6b7280;">(Jan 2026)</span></div>
-                        <div>✅ Year 2 TNA completed <span style="color:#6b7280;">(Jan 2025)</span></div>
-                        <div>⚠️ UoF training delivery <span style="color:#d97706;font-weight:600;">Delayed 6 weeks</span></div>
-                        <div>❌ SSCA Policies (9-100s/9-200s/Warrants) <span style="color:#dc2626;font-weight:600;">Off-track — pushed to 2026</span></div>
-                        <div>❌ NDP/SSCA Officer Training <span style="color:#dc2626;font-weight:600;">Pushed to Feb 8, 2026</span></div>
+                <div class="progress-row">
+                    <div class="progress-label-col">
+                        <div class="progress-label">Policies Approved</div>
+                        <div class="progress-sublabel">15 of ~25 required SA policies completed</div>
                     </div>
+                    <div class="progress-track"><div class="progress-fill progress-fill-green" data-target="60"></div></div>
+                    <div class="progress-value">60%</div>
                 </div>
 
-                <!-- Phase 3 Milestones -->
-                <div>
-                    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#2563eb;margin-bottom:8px;">Phase 3 — Evaluation (Mar 2026–Mar 2029)</div>
-                    <div style="font-size:12px;line-height:1.8;color:#374151;">
-                        <div>🔲 SSCA/Warrants policy finalization &amp; training delivery</div>
-                        <div>🔲 FTO SOP 40-hour training deployment (Fall 2026)</div>
-                        <div>🔲 Comprehensive UoF audit cycles begin</div>
-                        <div>🔲 Community engagement &amp; feedback evaluation</div>
-                        <div>🔲 IA/OPCR backlog elimination milestone</div>
-                        <div>🔲 Annual sustained compliance audits (Years 3–5)</div>
-                        <div>🔲 Paragraph 440 compliance determination <span style="color:#6b7280;">(Mar 2029)</span></div>
+                <div class="progress-row">
+                    <div class="progress-label-col">
+                        <div class="progress-label">Year 1 Training Delivery</div>
+                        <div class="progress-sublabel">All 13 required 2024 courses completed</div>
                     </div>
+                    <div class="progress-track"><div class="progress-fill progress-fill-green" data-target="100"></div></div>
+                    <div class="progress-value">100%</div>
+                </div>
+
+                <div class="progress-row">
+                    <div class="progress-label-col">
+                        <div class="progress-label">Year 2 Training On-Track</div>
+                        <div class="progress-sublabel">UoF delayed 6 wks; NDP/SSCA pushed to Feb 2026</div>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill progress-fill-amber" data-target="54"></div></div>
+                    <div class="progress-value">54%</div>
+                </div>
+
+                <div class="progress-row">
+                    <div class="progress-label-col">
+                        <div class="progress-label">SA Parts Making Progress</div>
+                        <div class="progress-sublabel">9 of 10 parts partial/on-track; Part 9 off-track</div>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill progress-fill-blue" data-target="80"></div></div>
+                    <div class="progress-value">80%</div>
+                </div>
+
+                <div class="progress-row">
+                    <div class="progress-label-col">
+                        <div class="progress-label">Compliance Paragraphs Engaged</div>
+                        <div class="progress-sublabel">7 fully compliant + 80+ partially compliant of ~440</div>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill progress-fill-gray" data-target="20"></div></div>
+                    <div class="progress-value">~20%</div>
+                </div>
+
+            </div>
+
+            <!-- Compact milestone checklist -->
+            <div class="milestone-grid">
+                <div>
+                    <div class="milestone-col-title">✅ Completed (Phases 1 &amp; 2)</div>
+                    <div>✅ Evaluation Plan finalized <span style="color:#9ca3af">(Sept 2024)</span></div>
+                    <div>✅ 5-300 UoF Series — 17 policies <span style="color:#9ca3af">(Feb 2025)</span></div>
+                    <div>✅ 7-803 Crisis Intervention Policy <span style="color:#9ca3af">(Feb 2025)</span></div>
+                    <div>✅ MVVG Preface <span style="color:#9ca3af">(Feb 2025)</span></div>
+                    <div>✅ 7-350 Emergency Medical Response <span style="color:#9ca3af">(Apr 2025)</span></div>
+                    <div>✅ 5-104 Non-Discriminatory Policing <span style="color:#9ca3af">(Sept 2025)</span></div>
+                    <div>✅ 5-109 Procedural Justice <span style="color:#9ca3af">(Sept 2025)</span></div>
+                    <div>✅ 3-501 / 3-502 Member Wellness <span style="color:#9ca3af">(Sept 2025)</span></div>
+                    <div>✅ 4-223 / 4-508 BWC Policies <span style="color:#9ca3af">(Sept 2025)</span></div>
+                    <div>✅ IA &amp; OPCR Misconduct Manuals <span style="color:#9ca3af">(Sept 2025)</span></div>
+                    <div>✅ Peer Support Policy <span style="color:#9ca3af">(Nov 2025)</span></div>
+                    <div>✅ 2-203 EIS Policy <span style="color:#9ca3af">(Jan 2026)</span></div>
+                    <div>✅ 2-601 QRP Policy <span style="color:#9ca3af">(Jan 2026)</span></div>
+                    <div>✅ Year 1 &amp; 2 Training Needs Assessments</div>
+                </div>
+                <div>
+                    <div class="milestone-col-title">⚠️ Delayed / ❌ Off-Track / 🔲 Phase 3 Ahead</div>
+                    <div>⚠️ UoF training delivery — delayed 6 weeks</div>
+                    <div>❌ SSCA Policies (9-100s / 9-200s / Warrants) — off-track</div>
+                    <div>❌ NDP / SSCA Officer Training — pushed to Feb 8, 2026</div>
+                    <div>❌ Misconduct &amp; Accountability (2-100s) — pending</div>
+                    <div>❌ Training Policies (2-500s) — pending</div>
+                    <div style="margin-top:8px;">🔲 SSCA finalization &amp; training delivery</div>
+                    <div>🔲 FTO SOP 40-hour training (Fall 2026)</div>
+                    <div>🔲 Comprehensive UoF audit cycles</div>
+                    <div>🔲 Community engagement evaluations</div>
+                    <div>🔲 IA/OPCR backlog full elimination</div>
+                    <div>🔲 Annual sustained compliance audits (Yrs 3–5)</div>
+                    <div>🔲 ¶440 compliance determination <span style="color:#9ca3af">(Mar 2029)</span></div>
                 </div>
             </div>
         </div>
@@ -1019,91 +1140,91 @@
                     </thead>
                     <tbody>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Preface: Mission, Vision, Values, Goals (MVVG)</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Preface: Mission, Vision, Values, Goals (MVVG)</a></td>
                             <td>Part 2</td>
                             <td>Feb 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-300 Series: Use of Force (17 Policies)</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-300 Series: Use of Force (17 Policies)</a></td>
                             <td>Part 4</td>
                             <td>Feb 2025 (approved), June 2025 (published)</td>
                             <td><span class="status-badge status-compliant">Published</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">7-803 Crisis Intervention</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">7-803 Crisis Intervention</a></td>
                             <td>Part 9</td>
                             <td>Feb 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">7-350 Emergency Medical Response</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">7-350 Emergency Medical Response</a></td>
                             <td>Part 2/7</td>
                             <td>April 14, 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-104 Non-Discriminatory Policing</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-104 Non-Discriminatory Policing</a></td>
                             <td>Part 3</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-109 Procedural Justice and Professional Policing</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-109 Procedural Justice and Professional Policing</a></td>
                             <td>Part 3</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">3-501 Member Health and Wellness</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">3-501 Member Health and Wellness</a></td>
                             <td>Part 8</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">3-502 Member Medical Information, Injury, and Incident Response</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">3-502 Member Medical Information, Injury, and Incident Response</a></td>
                             <td>Part 8</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Minneapolis Police Misconduct Investigation Manual: IA</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Minneapolis Police Misconduct Investigation Manual: IA</a></td>
                             <td>Part 10</td>
                             <td>Sept 19, 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Minneapolis Police Misconduct Investigation Manual: OPCR</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Minneapolis Police Misconduct Investigation Manual: OPCR</a></td>
                             <td>Part 10</td>
                             <td>Sept 19, 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">4-223 Body Worn Cameras and In-Car Cameras</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">4-223 Body Worn Cameras and In-Car Cameras</a></td>
                             <td>Part 6</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">4-508 BWC and ICC Data Management</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">4-508 BWC and ICC Data Management</a></td>
                             <td>Part 6</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Peer Support Policy</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">Peer Support Policy</a></td>
                             <td>Part 8</td>
                             <td>Nov 6, 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">2-203 Early Intervention System (EIS)</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">2-203 Early Intervention System (EIS)</a></td>
                             <td>Part 8</td>
                             <td>Jan 2, 2026</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">2-601 Quarterly Review Panels (QRP)</a></td>
+                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">2-601 Quarterly Review Panels (QRP)</a></td>
                             <td>Part 10</td>
                             <td>Jan 2, 2026</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
@@ -1405,6 +1526,17 @@
     </div>
 
     <script>
+        // Animate progress bars when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            requestAnimationFrame(function() {
+                document.querySelectorAll('.progress-fill[data-target]').forEach(function(bar) {
+                    setTimeout(function() {
+                        bar.style.width = bar.dataset.target + '%';
+                    }, 150);
+                });
+            });
+        });
+
         function switchTab(event, tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
@@ -1421,25 +1553,25 @@
 
         // Auto-link policy number patterns (e.g. "5-300", "7-803 Series", "2-203") to Policy Hub
         document.addEventListener('DOMContentLoaded', function() {
-            const HUB = 'https://mpdpolicyhub.minneapolismn.gov';
+            const HUB = 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual';
             // Deep-link lookup: policy number → direct hub or city page URL
             const POLICY_URLS = {
-                '5-300': 'https://mpdpolicyhub.minneapolismn.gov',
-                '5-104': 'https://mpdpolicyhub.minneapolismn.gov',
-                '5-109': 'https://mpdpolicyhub.minneapolismn.gov',
-                '7-803': 'https://mpdpolicyhub.minneapolismn.gov',
-                '7-350': 'https://mpdpolicyhub.minneapolismn.gov',
-                '3-501': 'https://mpdpolicyhub.minneapolismn.gov',
-                '3-502': 'https://mpdpolicyhub.minneapolismn.gov',
-                '4-223': 'https://mpdpolicyhub.minneapolismn.gov',
-                '4-508': 'https://mpdpolicyhub.minneapolismn.gov',
-                '2-203': 'https://mpdpolicyhub.minneapolismn.gov',
-                '2-601': 'https://mpdpolicyhub.minneapolismn.gov',
-                '2-100': 'https://mpdpolicyhub.minneapolismn.gov',
-                '2-500': 'https://mpdpolicyhub.minneapolismn.gov',
-                '9-100': 'https://mpdpolicyhub.minneapolismn.gov',
-                '9-200': 'https://mpdpolicyhub.minneapolismn.gov',
-                '9-300': 'https://mpdpolicyhub.minneapolismn.gov',
+                '5-300': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '5-104': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '5-109': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '7-803': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '7-350': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '3-501': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '3-502': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '4-223': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '4-508': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '2-203': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '2-601': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '2-100': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '2-500': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '9-100': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '9-200': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '9-300': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
             };
             // Match MPD policy numbers: digit-3digits, optionally followed by "Series" or "s"
             const POLICY_RE = /\b(\d-\d{3,4}(?:s\b|\s+Series)?)/g;
