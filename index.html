@@ -720,6 +720,7 @@
 
         ul, ol {
             margin-bottom: 12px;
+            padding-left: 20px;
         }
 
         li {
@@ -1182,7 +1183,7 @@
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-300 Series: Use of Force (17 Policies)</a></td>
+                            <td><a href="https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/mpd-policies/" target="_blank" rel="noopener" class="policy-link" title="View 5-300 Series: Use of Force (17 Policies) on MPD Policy Hub">5-300 Series: Use of Force (17 Policies)</a></td>
                             <td>Part 4</td>
                             <td>Feb 2025 (approved), June 2025 (published)</td>
                             <td><span class="status-badge status-compliant">Published</span></td>
@@ -1194,19 +1195,19 @@
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">7-350 Emergency Medical Response</a></td>
+                            <td><a href="https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/mpd-policies/police-policies-feedback/7-350-emergency-medical-response/" target="_blank" rel="noopener" class="policy-link" title="View 7-350 Emergency Medical Response on MPD Policy Hub">7-350 Emergency Medical Response</a></td>
                             <td>Part 2/7</td>
                             <td>April 14, 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-104 Non-Discriminatory Policing</a></td>
+                            <td><a href="https://lims.minneapolismn.gov/download/Agenda/7237/5186/Policy5-104.pdf" target="_blank" rel="noopener" class="policy-link" title="View 5-104 Non-Discriminatory Policing on MPD Policy Hub">5-104 Non-Discriminatory Policing</a></td>
                             <td>Part 3</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
                         </tr>
                         <tr class="policy-row">
-                            <td><a href="https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual" target="_blank" rel="noopener" class="policy-link" title="View on MPD Policy Hub">5-109 Procedural Justice and Professional Policing</a></td>
+                            <td><a href="https://lims.minneapolismn.gov/download/Agenda/7238/5186/Policy5-109.pdf" target="_blank" rel="noopener" class="policy-link" title="View 5-109 Procedural Justice and Professional Policing on MPD Policy Hub">5-109 Procedural Justice and Professional Policing</a></td>
                             <td>Part 3</td>
                             <td>Apr–Sept 2025</td>
                             <td><span class="status-badge status-compliant">Approved</span></td>
@@ -1592,22 +1593,22 @@
             const HUB = 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual';
             // Deep-link lookup: policy number → direct hub or city page URL
             const POLICY_URLS = {
-                '5-300': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '5-104': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '5-109': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '7-803': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '7-350': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '3-501': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '3-502': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '4-223': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '4-508': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '2-203': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '2-601': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '2-100': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '2-500': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '9-100': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '9-200': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
-                '9-300': 'https://mpdpolicyhub.minneapolismn.gov/main/mpd-policy-and-procedure-manual',
+                '5-104': 'https://lims.minneapolismn.gov/download/Agenda/7237/5186/Policy5-104.pdf',
+                '5-109': 'https://lims.minneapolismn.gov/download/Agenda/7238/5186/Policy5-109.pdf',
+                '5-300': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/mpd-policies/',
+                '7-350': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/mpd-policies/police-policies-feedback/7-350-emergency-medical-response/',
+                '7-803': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/court-enforceable-settlement-agreement/mpd-policies/police-policies-feedback/',
+                '3-501': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '3-502': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '4-223': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '4-508': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '2-203': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '2-601': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '2-100': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '2-500': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '9-100': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '9-200': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
+                '9-300': 'https://www.minneapolismn.gov/resident-services/public-safety/police-public-safety/investigations-settlement-agreement/implementation-updates/',
             };
             // Match MPD policy numbers: digit-3digits, optionally followed by "Series" or "s"
             const POLICY_RE = /\b(\d-\d{3,4}(?:s\b|\s+Series)?)/g;
